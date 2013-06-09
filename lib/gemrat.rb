@@ -3,8 +3,8 @@ require "gemrat/version"
 module Gemrat
   def fetch_gem name
     gems_response = `gem search -r #{name}`
-    names_array = gems_response.split(/\n/)
-    match = names_array.find { |n| /^#{name} / =~ n }
+    gems_array = gems_response.split(/\n/)
+    match = gems_array.find { |n| /^#{name} / =~ n }
     gem = ("gem " + match).gsub(/[()]/, "'")
     gem.gsub(/#{name}/, "'#{name}',")
   end
