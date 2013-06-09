@@ -1,3 +1,8 @@
 #!/usr/bin/env ruby
 
+require 'gemrat'
+include Gemrat
 
+set :run, true
+
+add_gem ARGV[0]

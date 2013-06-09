@@ -9,13 +9,10 @@ module Gemrat
     gem.gsub(/#{name}/, "'#{name}',")
   end
 
-  def convert_gem name_version
-    name_version
-  end
-
   def add_gem name
-    #Fetch gem
-    #Open gemfile
-    #Add gem
+    gem = fetch_gem name
+    gemfile = File.open('TestGemfile', 'w+')
+    gemfile << "\n#{gem}"
+    gemfile.close
   end
 end

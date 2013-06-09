@@ -2,7 +2,7 @@ require 'spec_helper'
 describe Gemrat do
   before do
     test_gemfile = File.new("TestGemfile", "w")
-    test_gemfile.puts ("https://rubygems.org'\n\n# Specify your gem's dependencies in gemrat.gemspec\ngem 'rspec', '2.13.0'\n")
+    test_gemfile.write ("https://rubygems.org'\n\n# Specify your gem's dependencies in gemrat.gemspec\ngem 'rspec', '2.13.0'\n")
     test_gemfile.close
 
     class DummyClass
@@ -22,8 +22,12 @@ describe Gemrat do
     gemfile_contents.should include("gem 'sinatra', '1.4.2'")
   end
 
-  it "returns a message if it can't find rubygems" do
-
+  describe "#add_gem" do
+    it "adds lastest gem version to gemfile" do
+      @dummy_class.add_gem("sinatra")
+      gemfile_contents = File.open('TestGemfile', 'r').read
+      gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
+    end
   end
 
   describe "#fetch_gem" do
