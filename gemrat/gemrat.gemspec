@@ -6,10 +6,10 @@ require 'gemrat/version'
 Gem::Specification.new do |spec|
   spec.name          = "gemrat"
   spec.version       = Gemrat::VERSION
-  spec.authors       = ["Dru Riley"]
-  spec.email         = ["dru@drurly.com"]
-  spec.description   = "Add gems from the command line."
-  spec.summary       = "Add gems from the command line."
+  spec.authors       = ["Dru"]
+  spec.email         = ["drurly@gmail.com"]
+  spec.description   = %q{TODO: Write a gem description}
+  spec.summary       = %q{TODO: Write a gem summary}
   spec.homepage      = ""
   spec.license       = "MIT"
 

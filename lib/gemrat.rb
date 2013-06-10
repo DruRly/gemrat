@@ -11,7 +11,7 @@ module Gemrat
 
   def add_gem name
     gem = fetch_gem name
-    gemfile = File.open('TestGemfile', 'w+')
+    gemfile = File.open('Gemfile', 'a')
     gemfile << "\n#{gem}"
     gemfile.close
   end
