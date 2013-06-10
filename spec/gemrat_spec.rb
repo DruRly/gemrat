@@ -16,12 +16,6 @@ describe Gemrat do
     File.delete("TestGemfile")
   end
 
-  it "adds the latest version of a gem to the file" do
-    `gemrat sinatra`
-    gemfile_contents = File.open('TestGemfile').read
-    gemfile_contents.should include("gem 'sinatra', '1.4.2'")
-  end
-
   describe "#add_gem" do
     it "adds lastest gem version to gemfile" do
       @dummy_class.add_gem("sinatra")
