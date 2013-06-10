@@ -18,7 +18,7 @@ describe Gemrat do
 
   describe "#add_gem" do
     it "adds lastest gem version to gemfile" do
-      @dummy_class.add_gem("sinatra")
+      @dummy_class.add_gem("sinatra", "TestGemfile")
       gemfile_contents = File.open('TestGemfile', 'r').read
       gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
     end
