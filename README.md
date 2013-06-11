@@ -6,21 +6,6 @@ Add the latest version of a gem to your Gemfile from the command line.
 * No need to edit your Gemfile directly
 * Gemrat bundles automatically
 
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-    gem 'gemrat'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install gemrat
-
 ## Usage
 Add the latest version of a gem to your Gemfile and bundle. Formated: (gem 'name', 'version')
 <pre>
@@ -42,6 +27,20 @@ $ gemrat rspec
 #=> gem 'rspec', '2.13.0' added.
 #=> Bundling...
 </pre>
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+    gem 'gemrat'
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install gemrat
 
 ## Contributing
 
