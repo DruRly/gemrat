@@ -15,6 +15,6 @@ module Gemrat
     gemfile = File.open(gemfile, 'a')
     gemfile << "\n#{gem}"
     gemfile.close
-    puts "#{gem} added.".green
+    puts "#{gem} added to your Gemfile.".green
   end
 end

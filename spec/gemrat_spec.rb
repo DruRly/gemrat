@@ -12,13 +12,25 @@ describe Gemrat do
     @dummy_class.extend(Gemrat)
   end
 
+  def capture_stdout(&block)
+    original_stdout = $stdout
+    $stdout = fake = StringIO.new
+    begin
+      yield
+    ensure
+      $stdout = original_stdout
+    end
+    fake.string
+  end
+
   after do
     File.delete("TestGemfile")
   end
 
   describe "#add_gem" do
     it "adds lastest gem version to gemfile" do
-      @dummy_class.add_gem("sinatra", "TestGemfile").should == "gem 'sinatra', '1.4.3' added."
+      output = capture_stdout { @dummy_class.add_gem("sinatra", "TestGemfile") }
+      output.should include("'sinatra', '1.4.3' added to your Gemfile")
       gemfile_contents = File.open('TestGemfile', 'r').read
       gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
     end
