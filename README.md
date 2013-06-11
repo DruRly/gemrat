@@ -28,6 +28,8 @@ $ gemrat rspec
 #=> Bundling...
 </pre>
 
+![gemrat](http://i.qkme.me/3ut4r1.jpg)
+
 ## Installation
 
 Add this line to your application's Gemfile:
