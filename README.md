@@ -1,6 +1,6 @@
 # Gemrat
 
-Add the latest version of gems to your Gemfile from the command line.
+Add the latest version of a gem to your Gemfile from the command line.
 
 * No need to search RubyGems for version numbers
 * No need to edit your Gemfile directly
