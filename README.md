@@ -16,7 +16,7 @@ Add the latest version of sinatra to your Gemfile and bundle
 <pre>
 $ gemrat sinatra
 
-#=> gem 'sinatra', '1.4.3' added.
+#=> gem 'sinatra', '1.4.3' added to your Gemfile.
 #=> Bundling...
 </pre>
 
@@ -24,7 +24,7 @@ Add the latest version of rspec to your Gemfile and bundle
 <pre>
 $ gemrat rspec
 
-#=> gem 'rspec', '2.13.0' added.
+#=> gem 'rspec', '2.13.0' added to your Gemfile.
 #=> Bundling...
 </pre>
 
