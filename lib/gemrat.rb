@@ -1,4 +1,5 @@
 require "gemrat/version"
+require "colored"
 
 module Gemrat
   def fetch_gem name
@@ -14,6 +15,6 @@ module Gemrat
     gemfile = File.open(gemfile, 'a')
     gemfile << "\n#{gem}"
     gemfile.close
-    p "#{gem} added."
+    puts "#{gem} added.".green
   end
 end
