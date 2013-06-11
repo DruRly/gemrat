@@ -4,4 +4,5 @@ require 'gemrat'
 include Gemrat
 
 add_gem ARGV[0]
+p "Bundling..."
 'bundle'
