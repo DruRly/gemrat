@@ -28,6 +28,9 @@ $ gemrat rspec
 #=> Bundling...
 </pre>
 
+<br/>
+<br/>
+
 ![gemrat](http://i.qkme.me/3ut4r1.jpg)
 
 ## Installation
