@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Gemrat::VERSION
   spec.authors       = ["Dru Riley"]
   spec.email         = ["dru@drurly.com"]
-  spec.description   = "Add gems from the command line."
-  spec.summary       = "Add gems from the command line."
-  spec.homepage      = ""
+  spec.description   = "Add the latest gem versions to your Gemfile from the command line."
+  spec.summary       = "Add the latest gem versions to your Gemfile from the command line."
+  spec.homepage      = "https://github.com/DruRly/gemrat"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split("\n")
