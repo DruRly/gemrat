@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Gemrat::VERSION
   spec.authors       = ["Dru Riley"]
   spec.email         = ["dru@drurly.com"]
-  spec.description   = "Add the latest gem versions to your Gemfile from the command line."
-  spec.summary       = "Add the latest gem versions to your Gemfile from the command line."
+  spec.description   = "Add the latest version of a gem to your Gemfile from the command line."
+  spec.summary       = "Add the latest version of a gem to your Gemfile from the command line."
   spec.homepage      = "https://github.com/DruRly/gemrat"
   spec.license       = "MIT"
 
