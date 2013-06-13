@@ -5,5 +5,3 @@ gemspec
 gem 'rspec', '2.13.0'
 gem 'pry',   '0.9.12.2'
 gem 'colored', '1.2'
-
-gem 'sinatra', '1.4.3'
