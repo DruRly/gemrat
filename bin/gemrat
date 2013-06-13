@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'gemrat'
-require "colored"
+
 include Gemrat
 
 add_gem ARGV[0]
