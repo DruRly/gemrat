@@ -31,9 +31,9 @@ module Gemrat
   def extract_gems gemfile
     File.read(gemfile).split("\n").inject([]) do |gems,l|
       l.strip!
-      (l =~ /\Agem/) &&
-        (gem = l.scan(/\Agem\s+([^,]*)/).flatten.first) &&
-        (gems << gem.gsub(/\A\W+|\W+\Z/, ''))
+      (l =~ /\Agem\(?(\s+)?/) &&
+        (gem = l.scan(/gem\(?(\s+)?(?<q>["|'])(?<g>[\w|\-|\.]+)(\k<q>)/).flatten.last) &&
+        (gems << gem)
       gems
     end
   end
