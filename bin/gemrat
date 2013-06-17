@@ -1,9 +1,23 @@
 #!/usr/bin/env ruby
 
+require 'pty'
+
+$:.unshift File.expand_path('../../lib', __FILE__)
 require 'gemrat'
 
 include Gemrat
 
-add_gem ARGV[0]
-puts "Bundling...".green
-'bundle'
+if add_gem ARGV[0]
+  puts "Bundling...".green
+  PTY.spawn 'bundle update' do |r, w, pid|
+    begin
+      r.sync
+      r.each_line do |line|
+        puts line.rstrip!
+      end
+    rescue Errno::EIO # simply ignoring this
+    ensure
+      ::Process.wait pid
+    end
+  end
+end
