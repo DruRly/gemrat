@@ -7,6 +7,11 @@ describe Gemrat do
 
     class DummyClass
       include Gemrat
+
+      def stubbed_response(*args)
+        File.read("./spec/rubygems_response_shim")
+      end
+      alias_method :fetch_all, :stubbed_response
     end
 
     @dummy_class = DummyClass.new
