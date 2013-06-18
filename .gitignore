@@ -1,2 +1,4 @@
 .rvmrc
 design.txt
+/*.gem
+/pkg
