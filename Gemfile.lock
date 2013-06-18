@@ -1,7 +1,10 @@
 PATH
   remote: .
   specs:
-    gemrat (0.0.7)
+    gemrat (0.1.2)
+      colored (= 1.2)
+      pry (= 0.9.12.2)
+      rspec (= 2.13.0)
 
 GEM
   remote: https://rubygems.org/

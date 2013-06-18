@@ -6,4 +6,4 @@ include Gemrat
 
 add_gem ARGV[0]
 puts "Bundling...".green
-'bundle'
+`bundle`
