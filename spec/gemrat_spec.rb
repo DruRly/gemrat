@@ -40,17 +40,15 @@ describe Gemrat do
         expect { @dummy_class.add_gem }.to raise_error(ArgumentError)
       end
     end
-  end
-
-  describe "#fetch_gem" do
-    it "returns latest version of gem" do
-      @dummy_class.fetch_gem("sinatra").should == "gem 'sinatra', '1.4.3'"
-    end
 
     context "when gem is not found" do
+      before do
+        @dummy_class.stub(:find_exact_match)
+      end
+
       it "raises GemNotFound" do
         expect do
-          @dummy_class.fetch_gem("no_one_would_name_a_gem_like_this_me_thinks")
+          @dummy_class.add_gem("unexistent_gem", "TestGemfile")
         end.to raise_error(Gemrat::GemNotFound)
       end
     end
