@@ -11,10 +11,24 @@ module Gemrat
   end
 
   def add_gem(name, gemfile='Gemfile')
+    raise ArgumentError unless name
+
     gem = fetch_gem name
     gemfile = File.open(gemfile, 'a')
     gemfile << "\n#{gem}"
     gemfile.close
     puts "#{gem} added to your Gemfile.".green
+  end
+
+  def usage
+    usage = <<-USAGE
+
+Gemrat
+
+Add gems to Gemfile from the command line.
+
+Usage: gemrat GEM_NAME
+
+    USAGE
   end
 end

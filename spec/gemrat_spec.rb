@@ -6,10 +6,10 @@ describe Gemrat do
     test_gemfile.close
 
     class DummyClass
+      include Gemrat
     end
 
     @dummy_class = DummyClass.new
-    @dummy_class.extend(Gemrat)
   end
 
   def capture_stdout(&block)
@@ -29,10 +29,14 @@ describe Gemrat do
 
   describe "#add_gem" do
     it "adds lastest gem version to gemfile" do
-      output = capture_stdout { @dummy_class.add_gem("sinatra", "TestGemfile") }
+      output  = capture_stdout { @dummy_class.add_gem("sinatra", "TestGemfile") }
       output.should include("'sinatra', '1.4.3' added to your Gemfile")
       gemfile_contents = File.open('TestGemfile', 'r').read
       gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
+    end
+
+    it "should raise argument error if name was not given" do
+      expect { @dummy_class.add_gem }.to raise_error(ArgumentError)
     end
   end
 
