@@ -2,3 +2,4 @@
 design.txt
 /*.gem
 /pkg
+Gemfile.lock
