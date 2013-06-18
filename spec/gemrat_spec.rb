@@ -35,14 +35,24 @@ describe Gemrat do
       gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
     end
 
-    it "should raise argument error if name was not given" do
-      expect { @dummy_class.add_gem }.to raise_error(ArgumentError)
+    context "when name is not given in arguments" do
+      it "should raise ArgumentError" do
+        expect { @dummy_class.add_gem }.to raise_error(ArgumentError)
+      end
     end
   end
 
   describe "#fetch_gem" do
     it "returns latest version of gem" do
       @dummy_class.fetch_gem("sinatra").should == "gem 'sinatra', '1.4.3'"
+    end
+
+    context "when gem is not found" do
+      it "raises GemNotFound" do
+        expect do
+          @dummy_class.fetch_gem("no_one_would_name_a_gem_like_this_me_thinks")
+        end.to raise_error(Gemrat::GemNotFound)
+      end
     end
   end
 end

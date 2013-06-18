@@ -12,4 +12,6 @@ begin
   `bundle`
 rescue ArgumentError
   puts usage
+rescue GemNotFound
+  puts gem_not_found(gem_name).red
 end
