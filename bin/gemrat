@@ -4,6 +4,14 @@ require 'gemrat'
 
 include Gemrat
 
-add_gem ARGV[0]
-puts "Bundling...".green
-`bundle`
+gem_name = ARGV[0]
+
+begin
+  add_gem gem_name
+  puts "Bundling...".green
+  `bundle`
+rescue ArgumentError
+  puts usage
+rescue GemNotFound
+  puts gem_not_found(gem_name).red
+end

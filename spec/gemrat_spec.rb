@@ -6,10 +6,15 @@ describe Gemrat do
     test_gemfile.close
 
     class DummyClass
+      include Gemrat
+
+      def stubbed_response(*args)
+        File.read("./spec/rubygems_response_shim")
+      end
+      alias_method :fetch_all, :stubbed_response
     end
 
     @dummy_class = DummyClass.new
-    @dummy_class.extend(Gemrat)
   end
 
   def capture_stdout(&block)
@@ -29,16 +34,28 @@ describe Gemrat do
 
   describe "#add_gem" do
     it "adds lastest gem version to gemfile" do
-      output = capture_stdout { @dummy_class.add_gem("sinatra", "TestGemfile") }
+      output  = capture_stdout { @dummy_class.add_gem("sinatra", "TestGemfile") }
       output.should include("'sinatra', '1.4.3' added to your Gemfile")
       gemfile_contents = File.open('TestGemfile', 'r').read
       gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
     end
-  end
 
-  describe "#fetch_gem" do
-    it "returns latest version of gem" do
-      @dummy_class.fetch_gem("sinatra").should == "gem 'sinatra', '1.4.3'"
+    context "when name is not given in arguments" do
+      it "should raise ArgumentError" do
+        expect { @dummy_class.add_gem }.to raise_error(ArgumentError)
+      end
+    end
+
+    context "when gem is not found" do
+      before do
+        @dummy_class.stub(:find_exact_match)
+      end
+
+      it "raises GemNotFound" do
+        expect do
+          @dummy_class.add_gem("unexistent_gem", "TestGemfile")
+        end.to raise_error(Gemrat::GemNotFound)
+      end
     end
   end
 end
