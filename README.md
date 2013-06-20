@@ -46,3 +46,9 @@ And then execute:
 Or install it yourself as:
 
     $ gem install gemrat
+
+## Development
+
+Run the test suite with:
+
+   $ rake
