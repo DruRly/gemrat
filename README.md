@@ -52,5 +52,5 @@ Or install it yourself as:
 Run the test suite with:
 
 <pre>
-   $ rake
+$ rake
 </pre>
