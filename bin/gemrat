@@ -11,7 +11,7 @@ begin
   puts "Bundling...".green
   `bundle`
 rescue ArgumentError
-  puts usage
+  puts Messages::USAGE
 rescue GemNotFound
-  puts gem_not_found(gem_name).red
+  puts Messages::GEM_NOT_FOUND.red % gem_name
 end

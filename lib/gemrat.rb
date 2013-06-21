@@ -1,8 +1,11 @@
 require "gemrat/version"
+require "gemrat/messages"
 require "colored"
 
 module Gemrat
   class GemNotFound < StandardError; end
+
+  include Messages
 
   def add_gem(name, gemfile='Gemfile')
     raise ArgumentError if name.nil?
@@ -41,25 +44,4 @@ module Gemrat
 
       normalize_for_gemfile exact_match
     end
-
-  public
-
-  def usage
-    usage = <<-USAGE
-
-Gemrat
-
-Add gems to Gemfile from the command line.
-
-Usage: gemrat GEM_NAME
-
-    USAGE
-  end
-
-  def gem_not_found(name)
-    message = <<-MESSAGE
-
-Unable to find gem '#{name}' on Rubygems. Sorry about that.
-    MESSAGE
-  end
 end
