@@ -17,27 +17,27 @@ module Gemrat
     end
 
     def run
-      with_error_handling do
-        for_each_gem do
+      for_each_gem do
+        with_error_handling do
 
           find_exact_match
           ensure_gem_exists
           normalize_for_gemfile
-
           add_to_gemfile
-        end
 
-        run_bundle
+        end
       end
+
+      run_bundle
     end
 
     private
     
-      attr_accessor :gem_name, :gem_names, :gemfile, :exact_match
+      attr_accessor :gem_name, :gems, :gemfile, :exact_match
 
       def parse_arguments(*args)
         Arguments.new(*args).tap do |a|
-          self.gem_names = a.gem_names
+          self.gems      = a.gem_names.map {|name| Gem.new(name) }
           self.gemfile   = a.gemfile
         end
       end
@@ -51,8 +51,8 @@ module Gemrat
       end
 
       def for_each_gem
-        gem_names.each do |gem_name|
-          self.gem_name = gem_name
+        gems.each do |gem|
+          self.gem_name = gem.name
           yield
         end
       rescue NoMethodError
