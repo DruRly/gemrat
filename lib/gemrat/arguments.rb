@@ -26,7 +26,7 @@ module Gemrat
       end
 
       def valid?
-        gem_names.empty? || gem_names.first =~ /-h|--help/
+        gem_names.empty? || gem_names.first =~ /-h|--help/ || gem_names.first.nil?
       end
 
       def invalid?

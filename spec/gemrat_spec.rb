@@ -8,7 +8,9 @@ describe Gemrat do
 
     class Gemrat::Runner
       def stubbed_response(*args)
-        File.read("./spec/resources/rubygems_response_shim")
+        File.read("./spec/resources/rubygems_response_shim_for_#{gem_name}")
+      rescue
+        ""
       end
       alias_method :fetch_all, :stubbed_response
     end
@@ -37,19 +39,34 @@ describe Gemrat do
     subject { Gemrat::Runner }
     describe "#run" do
       context "when valid arguments are given" do
-        it "adds lastest gem version to gemfile" do
-          output  = capture_stdout { subject.run("sinatra", "-g", "TestGemfile") }
-          output.should include("'sinatra', '1.4.3' added to your Gemfile")
-          gemfile_contents = File.open('TestGemfile', 'r').read
-          gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
+        context "for one gem" do
+          it "adds lastest gem version to gemfile" do
+            output  = capture_stdout { subject.run("sinatra", "-g", "TestGemfile") }
+            output.should include("'sinatra', '1.4.3' added to your Gemfile")
+            gemfile_contents = File.open('TestGemfile', 'r').read
+            gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
+          end
+        end
+
+        context "for multiple gems" do
+          it "adds latest gem versions to gemfile" do
+            output  = capture_stdout { subject.run("sinatra", "rails", "minitest", "-g", "TestGemfile") }
+            output.should include("'sinatra', '1.4.3' added to your Gemfile")
+            output.should include("'minitest', '5.0.5' added to your Gemfile")
+            output.should include("'rails', '3.2.13' added to your Gemfile")
+            gemfile_contents = File.open('TestGemfile', 'r').read
+            gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
+            gemfile_contents.should include("\ngem 'minitest', '5.0.5'")
+            gemfile_contents.should include("\ngem 'rails', '3.2.13'")
+          end
         end
       end
 
-      ["when gem name is left out from the arguments",
-       "when -h or --help is given in the arguments"].each do |ctx|
+      ["when gem name is left out from the arguments", "",
+       "when -h or --help is given in the arguments", "-h"].each_slice(2) do |ctx, arg|
         context ctx do
           it "prints usage" do
-            output = capture_stdout { subject.run }
+            output = capture_stdout { subject.run(arg == "" ? nil : arg) }
             output.should include(Gemrat::Messages::USAGE)
           end
         end

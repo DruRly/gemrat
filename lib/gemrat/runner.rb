@@ -18,25 +18,28 @@ module Gemrat
 
     def run
       with_error_handling do
+        for_each_gem do
 
-        find_exact_match
-        ensure_gem_exists
-        normalize_for_gemfile
+          find_exact_match
+          ensure_gem_exists
+          normalize_for_gemfile
 
-        add_to_gemfile
+          add_to_gemfile
+        end
+
         run_bundle
-
       end
     end
 
     private
     
-      attr_accessor :gem_name, :gemfile, :exact_match
+      attr_accessor :gem_name, :gem_names, :gemfile, :exact_match
 
       def parse_arguments(*args)
-        arguments = Arguments.new(*args)
-        self.gem_name = arguments.gem_names.first
-        self.gemfile  = arguments.gemfile
+        Arguments.new(*args).tap do |a|
+          self.gem_names = a.gem_names
+          self.gemfile   = a.gemfile
+        end
       end
 
       def with_error_handling
@@ -45,6 +48,15 @@ module Gemrat
         puts Messages::USAGE
       rescue GemNotFound
         puts Messages::GEM_NOT_FOUND.red % gem_name
+      end
+
+      def for_each_gem
+        gem_names.each do |gem_name|
+          self.gem_name = gem_name
+          yield
+        end
+      rescue NoMethodError
+        yield
       end
 
       def find_exact_match
