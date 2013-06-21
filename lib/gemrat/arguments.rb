@@ -22,7 +22,15 @@ module Gemrat
       attr_accessor :arguments
 
       def validate
-        raise ArgumentError if gem_names.empty? || gem_names.first =~ /-h|--help/
+        raise ArgumentError if invalid?
+      end
+
+      def valid?
+        gem_names.empty? || gem_names.first =~ /-h|--help/
+      end
+
+      def invalid?
+        !! valid?
       end
 
       def extract_options
