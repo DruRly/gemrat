@@ -1,13 +1,17 @@
 module Gemrat
   module Messages
 
-    USAGE = <<-USAGE.gsub /^( +)(\w+)/, '\2'
+    USAGE = <<-USAGE.gsub /^( +)(\w+|  -)/, '\2'
 
     Gemrat
 
     Add gems to Gemfile from the command line.
 
-    Usage: gemrat GEM_NAME
+    Usage: gemrat GEM_NAME [OPTIONS]
+
+    Options:
+
+      -g [--gemfile]  # Specify the Gemfile to be used. Defaults to 'Gemfile'.
 
     USAGE
 

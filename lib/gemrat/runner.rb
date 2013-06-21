@@ -37,7 +37,7 @@ module Gemrat
 
       def parse_arguments(*args)
         arguments = Arguments.new(*args)
-        self.gem_name = arguments.gem_name
+        self.gem_name = arguments.gem_names.first
         self.gemfile  = arguments.gemfile
       end
 
