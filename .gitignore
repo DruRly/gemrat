@@ -3,3 +3,5 @@ design.txt
 /*.gem
 /pkg
 Gemfile.lock
+.ruby-gemset
+.ruby-version
