@@ -8,10 +8,7 @@ module Gemrat
     def initialize(*args)
       self.arguments = *args
 
-      options  = arguments - gem_names
-      opts     = Hash[*options]
-
-      self.gemfile  = opts.delete("-g") || opts.delete("--gemfile") || "Gemfile"
+      extract_options
     end
 
     def gem_names
@@ -22,5 +19,13 @@ module Gemrat
 
       attr_accessor :arguments
 
+      def extract_options
+        options  = arguments - gem_names
+        opts     = Hash[*options]
+
+        self.gemfile  = opts.delete("-g") || opts.delete("--gemfile") || "Gemfile"
+      rescue ArgumentError
+        # unable to extract options, leave them nil
+      end
   end
 end

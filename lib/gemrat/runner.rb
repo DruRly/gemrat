@@ -50,7 +50,7 @@ module Gemrat
       end
 
       def validate_input
-        raise ArgumentError if gem_name.nil?
+        raise ArgumentError if gem_name.nil? || gem_name =~ /-h|--help/
       end
 
       def find_exact_match

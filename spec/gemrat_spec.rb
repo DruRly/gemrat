@@ -36,17 +36,22 @@ describe Gemrat do
   describe Gemrat::Runner do
     subject { Gemrat::Runner }
     describe "#run" do
-      it "adds lastest gem version to gemfile" do
-        output  = capture_stdout { subject.run("sinatra", "-g", "TestGemfile") }
-        output.should include("'sinatra', '1.4.3' added to your Gemfile")
-        gemfile_contents = File.open('TestGemfile', 'r').read
-        gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
+      context "when valid arguments are given" do
+        it "adds lastest gem version to gemfile" do
+          output  = capture_stdout { subject.run("sinatra", "-g", "TestGemfile") }
+          output.should include("'sinatra', '1.4.3' added to your Gemfile")
+          gemfile_contents = File.open('TestGemfile', 'r').read
+          gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
+        end
       end
 
-      context "when name is not given in arguments" do
-        it "prints usage" do
-          output = capture_stdout { subject.run }
-          output.should include(Gemrat::Messages::USAGE)
+      ["when gem name is left out from the arguments",
+       "when -h or --help is given in the arguments"].each do |ctx|
+        context ctx do
+          it "prints usage" do
+            output = capture_stdout { subject.run }
+            output.should include(Gemrat::Messages::USAGE)
+          end
         end
       end
 

@@ -7,11 +7,12 @@ module Gemrat
 
     Add gems to Gemfile from the command line.
 
-    Usage: gemrat GEM_NAME [OPTIONS]
+    Usage: gemrat [GEM_NAME] [OPTIONS]
 
     Options:
 
       -g [--gemfile]  # Specify the Gemfile to be used. Defaults to 'Gemfile'.
+      -h [--help]     # Print these usage instructions.
 
     USAGE
 
