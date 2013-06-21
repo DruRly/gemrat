@@ -5,16 +5,17 @@ describe Gemrat do
     test_gemfile.write ("https://rubygems.org'\n\n# Specify your gem's dependencies in gemrat.gemspec\ngem 'rspec', '2.13.0'\n")
     test_gemfile.close
 
-    class DummyClass
-      include Gemrat
 
+    class Gemrat::Runner
       def stubbed_response(*args)
         File.read("./spec/rubygems_response_shim")
       end
       alias_method :fetch_all, :stubbed_response
     end
+  end
 
-    @dummy_class = DummyClass.new
+  after :each do
+    Gemrat::Runner.instance = nil
   end
 
   def capture_stdout(&block)
@@ -32,29 +33,33 @@ describe Gemrat do
     File.delete("TestGemfile")
   end
 
-  describe "#add_gem" do
-    it "adds lastest gem version to gemfile" do
-      output  = capture_stdout { @dummy_class.add_gem("sinatra", "TestGemfile") }
-      output.should include("'sinatra', '1.4.3' added to your Gemfile")
-      gemfile_contents = File.open('TestGemfile', 'r').read
-      gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
-    end
-
-    context "when name is not given in arguments" do
-      it "should raise ArgumentError" do
-        expect { @dummy_class.add_gem }.to raise_error(ArgumentError)
-      end
-    end
-
-    context "when gem is not found" do
-      before do
-        @dummy_class.stub(:find_exact_match)
+  describe Gemrat::Runner do
+    subject { Gemrat::Runner }
+    describe "#run" do
+      it "adds lastest gem version to gemfile" do
+        output  = capture_stdout { subject.run("sinatra", "TestGemfile") }
+        output.should include("'sinatra', '1.4.3' added to your Gemfile")
+        gemfile_contents = File.open('TestGemfile', 'r').read
+        gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
       end
 
-      it "raises GemNotFound" do
-        expect do
-          @dummy_class.add_gem("unexistent_gem", "TestGemfile")
-        end.to raise_error(Gemrat::GemNotFound)
+      context "when name is not given in arguments" do
+        it "prints usage" do
+          output = capture_stdout { subject.run }
+          output.should include(Gemrat::Messages::USAGE)
+        end
+      end
+
+      context "when gem is not found" do
+        before do
+          subject.stub(:find_exact_match)
+          @gem_name = "unexistent_gem"
+        end
+
+        it "prints a nice error message" do
+          output = capture_stdout { subject.run(@gem_name) }
+          output.should include("#{Gemrat::Messages::GEM_NOT_FOUND % @gem_name}")
+        end
       end
     end
   end
