@@ -8,8 +8,8 @@ describe Gemrat do
 
     class Gemrat::Runner
       def stubbed_response(*args)
-        File.read("./spec/resources/rubygems_response_shim_for_#{gem_name}")
-      rescue
+        File.read("./spec/resources/rubygems_response_shim_for_#{gem.name}")
+      rescue Errno::ENOENT
         ""
       end
       alias_method :fetch_all, :stubbed_response
@@ -45,6 +45,7 @@ describe Gemrat do
             output.should include("'sinatra', '1.4.3' added to your Gemfile")
             gemfile_contents = File.open('TestGemfile', 'r').read
             gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
+            output.should include("Bundling")
           end
         end
 
@@ -58,6 +59,18 @@ describe Gemrat do
             gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
             gemfile_contents.should include("\ngem 'minitest', '5.0.5'")
             gemfile_contents.should include("\ngem 'rails', '3.2.13'")
+            output.should include("Bundling")
+          end
+
+          context "when one of the gems is invalid" do
+            it "adds other gems and runs bundle" do
+              output  = capture_stdout { subject.run("sinatra", "beer_maker_2000", "minitest", "-g", "TestGemfile") }
+              output.should include("'sinatra', '1.4.3' added to your Gemfile")
+              output.should include("'minitest', '5.0.5' added to your Gemfile")
+              output.should include("'minitest', '5.0.5' added to your Gemfile")
+              output.should include("#{Gemrat::Messages::GEM_NOT_FOUND % "beer_maker_2000"}")
+              output.should include("Bundling")
+            end
           end
         end
       end
@@ -81,6 +94,7 @@ describe Gemrat do
         it "prints a nice error message" do
           output = capture_stdout { subject.run(@gem_name) }
           output.should include("#{Gemrat::Messages::GEM_NOT_FOUND % @gem_name}")
+          output.should_not include("Bundling...")
         end
       end
     end
