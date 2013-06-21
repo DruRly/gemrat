@@ -8,6 +8,8 @@ module Gemrat
     def initialize(*args)
       self.arguments = *args
 
+      validate
+
       extract_options
     end
 
@@ -18,6 +20,10 @@ module Gemrat
     private
 
       attr_accessor :arguments
+
+      def validate
+        raise ArgumentError if gem_names.empty? || gem_names.first =~ /-h|--help/
+      end
 
       def extract_options
         options  = arguments - gem_names

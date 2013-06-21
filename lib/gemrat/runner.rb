@@ -13,13 +13,11 @@ module Gemrat
     include Messages
 
     def initialize(*args)
-      parse_arguments(*args)
+      with_error_handling { parse_arguments(*args) }
     end
 
     def run
       with_error_handling do
-
-        validate_input
 
         find_exact_match
         ensure_gem_exists
@@ -47,10 +45,6 @@ module Gemrat
         puts Messages::USAGE
       rescue GemNotFound
         puts Messages::GEM_NOT_FOUND.red % gem_name
-      end
-
-      def validate_input
-        raise ArgumentError if gem_name.nil? || gem_name =~ /-h|--help/
       end
 
       def find_exact_match
