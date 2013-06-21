@@ -67,7 +67,6 @@ describe Gemrat do
               output  = capture_stdout { subject.run("sinatra", "beer_maker_2000", "minitest", "-g", "TestGemfile") }
               output.should include("'sinatra', '1.4.3' added to your Gemfile")
               output.should include("'minitest', '5.0.5' added to your Gemfile")
-              output.should include("'minitest', '5.0.5' added to your Gemfile")
               output.should include("#{Gemrat::Messages::GEM_NOT_FOUND % "beer_maker_2000"}")
               output.should include("Bundling")
             end
