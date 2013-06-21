@@ -8,7 +8,7 @@ describe Gemrat do
 
     class Gemrat::Runner
       def stubbed_response(*args)
-        File.read("./spec/rubygems_response_shim")
+        File.read("./spec/resources/rubygems_response_shim")
       end
       alias_method :fetch_all, :stubbed_response
     end
