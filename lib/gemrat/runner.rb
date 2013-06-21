@@ -13,7 +13,7 @@ module Gemrat
     include Messages
 
     def initialize(*args)
-      save_arguments(*args)
+      parse_arguments(*args)
     end
 
     def run
@@ -35,9 +35,10 @@ module Gemrat
     
       attr_accessor :gem_name, :gemfile, :exact_match
 
-      def save_arguments(*args)
-        self.gem_name = args[0]
-        self.gemfile  = args[1] || "Gemfile"
+      def parse_arguments(*args)
+        arguments = Arguments.new(*args)
+        self.gem_name = arguments.gem_name
+        self.gemfile  = arguments.gemfile
       end
 
       def with_error_handling
