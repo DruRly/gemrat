@@ -2,16 +2,4 @@
 
 require 'gemrat'
 
-include Gemrat
-
-gem_name = ARGV[0]
-
-begin
-  add_gem gem_name
-  puts "Bundling...".green
-  `bundle`
-rescue ArgumentError
-  puts usage
-rescue GemNotFound
-  puts gem_not_found(gem_name).red
-end
+Gemrat::Runner.run(*ARGV)
