@@ -84,7 +84,7 @@ module Gemrat
 
       def add_to_gemfile
         new_gemfile = File.open(gemfile, 'a')
-        new_gemfile << "\n#{gem.name}"
+        new_gemfile << "\n#{gem.name}\n"
         new_gemfile.close
         puts "#{gem.name} added to your Gemfile.".green
       end
