@@ -9,7 +9,7 @@ module Gemrat
       self.valid = true
     end
 
-    def normalized_name
+    def to_s
       @normalized_name ||= normalize_name
     end
 

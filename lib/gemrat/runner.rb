@@ -20,7 +20,7 @@ module Gemrat
       for_each_gem do
         with_error_handling do
 
-          add_to_gemfile
+          gemfile.add(gem)
 
         end
       end
@@ -54,13 +54,6 @@ module Gemrat
           self.gem = gem
           yield
         end
-      end
-
-      def add_to_gemfile
-        new_gemfile = File.open(gemfile, 'a')
-        new_gemfile << "\n#{gem.normalized_name}"
-        new_gemfile.close
-        puts "#{gem.normalized_name} added to your Gemfile.".green
       end
 
       def run_bundle

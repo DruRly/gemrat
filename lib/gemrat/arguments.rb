@@ -40,7 +40,7 @@ module Gemrat
         options  = arguments - gem_names
         opts     = Hash[*options]
 
-        self.gemfile  = opts.delete("-g") || opts.delete("--gemfile") || "Gemfile"
+        self.gemfile  = Gemfile.new(opts.delete("-g") || opts.delete("--gemfile") || "Gemfile")
       rescue ArgumentError
         raise UnableToParse
         # unable to extract options, leave them nil
