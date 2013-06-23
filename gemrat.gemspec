@@ -6,8 +6,8 @@ require 'gemrat/version'
 Gem::Specification.new do |spec|
   spec.name          = "gemrat"
   spec.version       = Gemrat::VERSION
-  spec.authors       = ["Dru Riley"]
-  spec.email         = ["dru@drurly.com"]
+  spec.authors       = ["Dru Riley", "Hrvoje Simic"]
+  spec.email         = ["dru@drurly.com", "shime.ferovac@gmail.com"]
   spec.description   = "Add the latest version of a gem to your Gemfile from the command line."
   spec.summary       = "Add the latest version of a gem to your Gemfile from the command line."
   spec.homepage      = "https://github.com/DruRly/gemrat"
