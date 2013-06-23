@@ -99,6 +99,19 @@ describe Gemrat do
           output.should_not include("Bundling...")
         end
       end
+
+      context "when gem already exists in a Gemfile" do
+        before do
+          test_gemfile = File.open("TestGemfile", "a")
+          test_gemfile << ("https://rubygems.org'\n\n# Specify your gem's dependencies in gemrat.gemspec\ngem 'minitest', '5.0.0'\n")
+          test_gemfile.close
+        end
+        it "should exit and report failure" do
+          output = capture_stdout { subject.run("minitest", "-g", "TestGemfile")}
+          output.should include("gem 'minitest' already exists")
+          output.should_not include("Bundling...")
+        end
+      end
     end
   end
 end

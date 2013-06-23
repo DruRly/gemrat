@@ -21,5 +21,10 @@ module Gemrat
     Unable to find gem '%s' on Rubygems. Sorry about that.
     GEM_NOT_FOUND
 
+    DUPLICATE_GEM_FOUND = <<-DUPLICATE_GEM_FOUND.gsub /^( +)(\w+)/, '\2'
+
+    gem '%s' already exists in your Gemfile. Skipping...
+    DUPLICATE_GEM_FOUND
+
   end
 end

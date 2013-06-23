@@ -13,6 +13,10 @@ module Gemrat
       @normalized_name ||= normalize_name
     end
 
+    def invalid!
+      self.valid = false 
+    end
+
     private
 
       def normalize_name
@@ -23,7 +27,7 @@ module Gemrat
       def find_exact_match
         find_all.reject do |n|
           /^#{name} / !~ n 
-        end.first || invalid!
+        end.first || raise(NotFound)
       end
 
       def find_all
@@ -32,11 +36,6 @@ module Gemrat
 
       def fetch_all
         `gem search -r #{name}`
-      end
-
-      def invalid!
-        self.valid = false 
-        raise NotFound
       end
   end
 end

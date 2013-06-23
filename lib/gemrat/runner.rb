@@ -47,6 +47,10 @@ module Gemrat
         puts Messages::USAGE
       rescue Gem::NotFound
         puts Messages::GEM_NOT_FOUND.red % gem.name
+        gem.invalid!
+      rescue Gemfile::DuplicateGemFound
+        puts Messages::DUPLICATE_GEM_FOUND % gem.name
+        gem.invalid!
       end
 
       def for_each_gem
