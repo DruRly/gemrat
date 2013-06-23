@@ -6,9 +6,9 @@ describe Gemrat do
     test_gemfile.close
 
 
-    class Gemrat::Runner
-      def stubbed_response(*args)
-        File.read("./spec/resources/rubygems_response_shim_for_#{gem.name}")
+    class Gemrat::Gem
+      def stubbed_response
+        File.read("./spec/resources/rubygems_response_shim_for_#{name}")
       rescue Errno::ENOENT
         ""
       end
@@ -86,7 +86,10 @@ describe Gemrat do
 
       context "when gem is not found" do
         before do
-          subject.stub(:find_exact_match)
+          subject.stub(:gem) do
+            gem = Gem.new
+            gem.invalid!
+          end
           @gem_name = "unexistent_gem"
         end
 

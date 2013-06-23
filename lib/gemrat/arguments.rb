@@ -1,5 +1,7 @@
 module Gemrat
   class Arguments
+    class UnableToParse < StandardError; end
+
     ATTRIBUTES = [:gems, :gemfile]
 
     ATTRIBUTES.each { |arg| attr_accessor arg }
@@ -27,7 +29,7 @@ module Gemrat
       attr_accessor :arguments
 
       def validate
-        raise ArgumentError if invalid?
+        raise UnableToParse if invalid?
       end
 
       def invalid?
@@ -40,6 +42,7 @@ module Gemrat
 
         self.gemfile  = opts.delete("-g") || opts.delete("--gemfile") || "Gemfile"
       rescue ArgumentError
+        raise UnableToParse
         # unable to extract options, leave them nil
       end
 

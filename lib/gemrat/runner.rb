@@ -20,9 +20,6 @@ module Gemrat
       for_each_gem do
         with_error_handling do
 
-          find_exact_match
-          ensure_gem_exists
-          normalize_for_gemfile
           add_to_gemfile
 
         end
@@ -35,7 +32,7 @@ module Gemrat
 
     private
     
-      attr_accessor :gems, :gemfile, :exact_match
+      attr_accessor :gems, :gemfile
 
       def parse_arguments(*args)
         Arguments.new(*args).tap do |a|
@@ -46,11 +43,10 @@ module Gemrat
 
       def with_error_handling
         yield
-      rescue ArgumentError
+      rescue Arguments::UnableToParse
         puts Messages::USAGE
-      rescue GemNotFound
+      rescue Gem::NotFound
         puts Messages::GEM_NOT_FOUND.red % gem.name
-        gem.invalid!
       end
 
       def for_each_gem
@@ -60,33 +56,11 @@ module Gemrat
         end
       end
 
-      def find_exact_match
-        self.exact_match = find_all(gem.name).reject { |n| /^#{gem.name} / !~ n }.first
-      end
-
-      def find_all(name)
-        fetch_all(name).split(/\n/)
-      end
-
-      def fetch_all(name)
-        `gem search -r #{name}`
-      end
-
-      def ensure_gem_exists
-        raise GemNotFound if exact_match.nil?
-      end
-
-      def normalize_for_gemfile
-        gem_name = exact_match.split.first
-        normalized = ("gem " + exact_match).gsub(/[()]/, "'")
-        self.gem.name = normalized.gsub(/#{gem_name}/, "'#{gem_name}',")
-      end
-
       def add_to_gemfile
         new_gemfile = File.open(gemfile, 'a')
-        new_gemfile << "\n#{gem.name}"
+        new_gemfile << "\n#{gem.normalized_name}"
         new_gemfile.close
-        puts "#{gem.name} added to your Gemfile.".green
+        puts "#{gem.normalized_name} added to your Gemfile.".green
       end
 
       def run_bundle
