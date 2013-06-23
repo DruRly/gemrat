@@ -44,7 +44,7 @@ describe Gemrat do
             output  = capture_stdout { subject.run("sinatra", "-g", "TestGemfile") }
             output.should include("'sinatra', '1.4.3' added to your Gemfile")
             gemfile_contents = File.open('TestGemfile', 'r').read
-            gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
+            gemfile_contents.should include("\ngem 'sinatra', '1.4.3'\n")
             output.should include("Bundling")
           end
         end
@@ -58,7 +58,7 @@ describe Gemrat do
             gemfile_contents = File.open('TestGemfile', 'r').read
             gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
             gemfile_contents.should include("\ngem 'minitest', '5.0.5'")
-            gemfile_contents.should include("\ngem 'rails', '3.2.13'")
+            gemfile_contents.should include("\ngem 'rails', '3.2.13'\n")
             output.should include("Bundling")
           end
 
