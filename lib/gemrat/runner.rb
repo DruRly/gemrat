@@ -39,7 +39,7 @@ module Gemrat
 
       def parse_arguments(*args)
         Arguments.new(*args).tap do |a|
-          self.gems      = a.gem_names.map {|name| Gem.new(name) }
+          self.gems      = a.gems
           self.gemfile   = a.gemfile
         end
       end

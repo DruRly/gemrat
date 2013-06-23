@@ -1,6 +1,6 @@
 module Gemrat
   class Arguments
-    ATTRIBUTES = [:gem_names, :gemfile]
+    ATTRIBUTES = [:gems, :gemfile]
 
     ATTRIBUTES.each { |arg| attr_accessor arg }
 
@@ -13,8 +13,13 @@ module Gemrat
       extract_options
     end
 
-    def gem_names
-      arguments.take_while { |arg| arg !~ /^-|^--/}
+
+    def gems
+      gem_names.map do |name|
+        gem      = Gem.new
+        gem.name = name
+        gem
+      end
     end
 
     private
@@ -36,6 +41,10 @@ module Gemrat
         self.gemfile  = opts.delete("-g") || opts.delete("--gemfile") || "Gemfile"
       rescue ArgumentError
         # unable to extract options, leave them nil
+      end
+
+      def gem_names
+        arguments.take_while { |arg| arg !~ /^-|^--/}
       end
   end
 end
