@@ -34,7 +34,7 @@ module Gemrat
     attr_accessor :gem
 
     private
-    
+
       attr_accessor :gems, :gemfile, :exact_match
 
       def parse_arguments(*args)
