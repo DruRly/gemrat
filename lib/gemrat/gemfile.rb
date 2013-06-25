@@ -11,8 +11,9 @@ module Gemrat
       check(gem)
 
       file << "\n#{gem}"
-      file.close
       puts "#{gem} added to your Gemfile.".green
+    ensure
+      file.close
     end
 
     private
