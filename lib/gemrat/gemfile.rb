@@ -6,9 +6,10 @@ module Gemrat
     end
 
     def add(gem)
+      file = File.open(path, "a")
+
       check(gem)
 
-      file = File.open(path, "a")
       file << "\n#{gem}"
       file.close
       puts "#{gem} added to your Gemfile.".green
