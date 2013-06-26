@@ -26,5 +26,10 @@ module Gemrat
     gem '%s' already exists in your Gemfile. Skipping...
     DUPLICATE_GEM_FOUND
 
+    NEWER_GEM_FOUND = <<-NEWER_GEM_FOUND
+
+    Gem '%s' already exists, but there is a newer version of the gem (v %s -> v %s).\n
+    Do you want to replace the old version with the newer version?
+    NEWER_GEM_FOUND
   end
 end
