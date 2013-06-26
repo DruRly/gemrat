@@ -31,11 +31,12 @@ module Gemrat
     attr_accessor :gem
 
     private
-    
+
       attr_accessor :gems, :gemfile
 
       def parse_arguments(*args)
         Arguments.new(*args).tap do |a|
+          binding.pry
           self.gems      = a.gems
           self.gemfile   = a.gemfile
         end

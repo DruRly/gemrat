@@ -2,7 +2,7 @@ module Gemrat
   class Arguments
     class UnableToParse < StandardError; end
 
-    ATTRIBUTES = [:gems, :gemfile]
+    ATTRIBUTES = [:gems, :gemfile, :replace_gem]
 
     ATTRIBUTES.each { |arg| attr_accessor arg }
 
