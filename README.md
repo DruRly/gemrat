@@ -7,7 +7,7 @@ Add the latest version of a gem to your Gemfile from the command line.
 * Gemrat bundles automatically
 
 ## Usage
-Add the latest version of a gem to your Gemfile and bundle. Formated: (gem 'name', 'version')
+Add the latest version of a gem to your Gemfile and bundle
 <pre>
 $ gemrat gem_name
 </pre>
