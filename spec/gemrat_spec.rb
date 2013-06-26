@@ -101,15 +101,28 @@ describe Gemrat do
       end
 
       context "when gem already exists in a Gemfile" do
-        before do
-          test_gemfile = File.open("TestGemfile", "a")
-          test_gemfile << ("https://rubygems.org'\n\n# Specify your gem's dependencies in gemrat.gemspec\ngem 'minitest', '5.0.0'\n")
-          test_gemfile.close
-        end
-        it "should exit and report failure" do
-          output = capture_stdout { subject.run("minitest", "-g", "TestGemfile")}
-          output.should include("gem 'minitest' already exists")
-          output.should_not include("Bundling...")
+        context "when the gem is the newest version" do
+          before do
+            test_gemfile = File.open("TestGemfile", "a")
+            test_gemfile << ("https://rubygems.org'\n\n# Specify your gem's dependencies in gemrat.gemspec\ngem 'minitest', '6.0.0'\n")
+            test_gemfile.close
+          end
+          it "should exit and report failure" do
+            output = capture_stdout { subject.run("minitest", "-g", "TestGemfile")}
+            output.should include("gem 'minitest' already exists")
+            output.should_not include("Bundling...")
+          end
+          context "when there is a newer gem" do
+            before do
+              test_gemfile = File.open("TestGemfile", "a")
+              test_gemfile << ("https://rubygems.org'\n\n# Specify your gem's dependencies in gemrat.gemspec\ngem 'minitest', '5.9.0'\n")
+              test_gemfile.close
+            end
+            it "should ask if you want to add the newer gem" do
+              output = capture_stdout { subject.run("minitest", "-g", "TestGemfile")}
+              output.should include("gem 'minitest' already exists with newer version 6.0.0")
+            end
+          end
         end
       end
     end
