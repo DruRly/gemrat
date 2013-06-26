@@ -1,8 +1,13 @@
 module Gemrat
   class Gemfile
     class DuplicateGemFound < StandardError; end
+
+    attr_accessor :needs_bundle
+    alias_method :needs_bundle?, :needs_bundle
+
     def initialize(path)
-      self.path = path
+      self.path         = path
+      self.needs_bundle = false
     end
 
     def add(gem)
@@ -10,8 +15,11 @@ module Gemrat
 
       check(gem, file)
 
-      file << "\n#{gem}"
-      puts "#{gem} added to your Gemfile.".green
+      if gem.replace_gem == true
+        file << "\n#{gem}"
+        puts "#{gem} added to your Gemfile.".green
+        needs_bundle!
+      end
     ensure
       file.close
     end
@@ -19,14 +27,41 @@ module Gemrat
     private
       attr_accessor :path
 
+      def needs_bundle!
+        self.needs_bundle = true
+      end
+
       def check(gem, file)
         grep_file = file.grep(/gem ("|')#{gem.name}("|'), ("|')#{gem.version}("|')/ )
         raise DuplicateGemFound unless grep_file.empty?
-        current_gem_version = grep_file.to_s.gsub(/[^\d|.]/, '')
+        current_gem_version = get_current_gem_version(gem, file)
+
+        return unless current_gem_version =~ /\S/
+
+        if current_gem_version < gem.version
+          prompt_gem_replacement(gem, current_gem_version)
+        end
       end
 
-      def file_regexp
-        Regexp.new("/gem (\"|')#{gem.name}(\"|')(|, (\"|')#{gem.version}(\"|'))/")
+      def prompt_gem_replacement(gem, gem_version)
+        print (Messages::NEWER_GEM_FOUND % [gem.name, gem.version, gem_version]).chomp + " "
+        case input
+        when /y|yes/
+          gem.replace_gem = true
+        else
+          gem.replace_gem = false
+        end
+      end
+
+      def get_current_gem_version(gem, file)
+        file.rewind
+        gem_version = file.grep(/gem ("|')#{gem.name}("|')[\W\d]+/)
+        gem_version = gem_version.to_s.gsub(/[^\d|.]+/, '')
+        gem_version
+      end
+
+      def input
+        STDIN.gets
       end
   end
 end

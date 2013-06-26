@@ -8,6 +8,7 @@ module Gemrat
 
 
     def initialize(*args)
+      self.replace_gem = true
       self.arguments = *args
 
       validate

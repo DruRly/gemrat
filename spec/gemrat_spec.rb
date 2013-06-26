@@ -105,7 +105,9 @@ describe Gemrat do
         context "when the gem is the newest version" do
           before do
             test_gemfile = File.open("TestGemfile", "w")
-            test_gemfile << ("https://rubygems.org'\n\n# Specify your gem's dependencies in gemrat.gemspec\ngem 'minitest', '6.0.0'\n")
+            test_gemfile << %Q{https://rubygems.org'
+                               # Specify your gem's dependencies in gemrat.gemspec
+                               gem 'minitest', '5.0.5'}
             test_gemfile.close
           end
           it "should exit and report failure" do
@@ -113,16 +115,39 @@ describe Gemrat do
             output.should include("gem 'minitest' already exists")
             output.should_not include("Bundling...")
           end
+        end
 
-          context "when there is a newer gem" do
+        context "when there is a newer gem" do
+          before do
+            test_gemfile = File.open("TestGemfile", "w")
+            test_gemfile << %Q{https://rubygems.org'
+                               # Specify your gem's dependencies in gemrat.gemspec
+                               gem 'minitest', '5.0.4'}
+            test_gemfile.close
+          end
+
+          context "when the update is rejected" do
             before do
-              test_gemfile = File.open("TestGemfile", "w")
-              test_gemfile << ("https://rubygems.org'\n\n# Specify your gem's dependencies in gemrat.gemspec\ngem 'minitest', '5.9.0'\n")
-              test_gemfile.close
+              Gemrat::Gemfile.any_instance.stub(:input) { "no\n" }
             end
+
             it "should ask if you want to add the newer gem" do
               output = capture_stdout { subject.run("minitest", "-g", "TestGemfile")}
-              output.should include("gem 'minitest' already exists with newer version 6.0.0")
+              output.should include("there is a newer version of the gem")
+              output.should_not include("Bundling...")
+            end
+          end
+
+          context "when the update is approved" do
+            before do
+              Gemrat::Gemfile.any_instance.stub(:input) { "y\n" }
+            end
+
+            it "should ask if you want to add the newer gem" do
+              output = capture_stdout { subject.run("minitest", "-g", "TestGemfile")}
+              output.should include("there is a newer version of the gem")
+              output.should include("gem 'minitest', '5.0.5' added to your Gemfile")
+              output.should include("Bundling...")
             end
           end
         end

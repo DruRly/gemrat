@@ -2,11 +2,12 @@ module Gemrat
   class Gem
     class NotFound < StandardError; end
 
-    attr_accessor :name, :valid
+    attr_accessor :name, :valid, :replace_gem
     alias_method :valid?, :valid
 
     def initialize
       self.valid = true
+      self.replace_gem = true
     end
 
     def to_s
@@ -21,8 +22,8 @@ module Gemrat
       normalize_name.gsub(/[^\d|.]/, '')
     end
 
-    private
 
+    private
       def normalize_name
         normalized = ("gem " + find_exact_match).gsub(/[()]/, "'")
         normalized.gsub(/#{name}/, "'#{name}',")

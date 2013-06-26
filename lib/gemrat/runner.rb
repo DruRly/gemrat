@@ -18,14 +18,10 @@ module Gemrat
 
     def run
       for_each_gem do
-        with_error_handling do
-
-          gemfile.add(gem)
-
-        end
+        with_error_handling { gemfile.add(gem) }
       end
 
-      run_bundle unless gems.nil? || gems.empty? || gems.select(&:valid?).empty?
+      run_bundle unless skip_bundle?
     end
 
     attr_accessor :gem
@@ -36,7 +32,6 @@ module Gemrat
 
       def parse_arguments(*args)
         Arguments.new(*args).tap do |a|
-          binding.pry
           self.gems      = a.gems
           self.gemfile   = a.gemfile
         end
@@ -59,6 +54,13 @@ module Gemrat
           self.gem = gem
           yield
         end
+      end
+
+      def skip_bundle?
+        gems.nil? ||
+          gems.empty? ||
+          gems.select(&:valid?).empty? ||
+          !gemfile.needs_bundle?
       end
 
       def run_bundle
