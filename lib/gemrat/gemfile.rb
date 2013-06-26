@@ -6,9 +6,9 @@ module Gemrat
     end
 
     def add(gem)
-      file = File.open(path, "a")
+      file = File.open(path, "a+")
 
-      check(gem)
+      check(gem, file)
 
       file << "\n#{gem}"
       puts "#{gem} added to your Gemfile.".green
@@ -19,8 +19,8 @@ module Gemrat
     private
       attr_accessor :path
 
-      def check(gem)
-        raise DuplicateGemFound unless File.open(path) { |f| f.grep(/gem ("|')#{gem.name}("|')/ )}.empty?
+      def check(gem, file)
+        raise DuplicateGemFound unless file.grep(/gem ("|')#{gem.name}("|')/ ).empty?
       end
   end
 end
