@@ -101,6 +101,7 @@ describe Gemrat do
       end
 
       context "when gem already exists in a Gemfile" do
+
         context "when the gem is the newest version" do
           before do
             test_gemfile = File.open("TestGemfile", "a")
@@ -112,6 +113,7 @@ describe Gemrat do
             output.should include("gem 'minitest' already exists")
             output.should_not include("Bundling...")
           end
+
           context "when there is a newer gem" do
             before do
               test_gemfile = File.open("TestGemfile", "a")

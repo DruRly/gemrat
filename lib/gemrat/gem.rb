@@ -17,6 +17,10 @@ module Gemrat
       self.valid = false 
     end
 
+    def version
+      normalize_name.gsub(/[^\d|.]/, '')
+    end
+
     private
 
       def normalize_name
