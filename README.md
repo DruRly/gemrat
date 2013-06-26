@@ -6,15 +6,11 @@ Add the latest version of a gem to your Gemfile from the command line.
 * No need to edit your Gemfile directly
 * Gemrat bundles automatically
 
-<br/>
-
 ## Usage
 Add the latest version of a gem to your Gemfile and bundle. Formated: (gem 'name', 'version')
 <pre>
 $ gemrat gem_name
 </pre>
-
-<br/>
 
 Add the latest version of sinatra to your Gemfile and bundle
 <pre>
@@ -24,7 +20,6 @@ $ gemrat sinatra
 #=> Bundling...
 </pre>
 
-<br/>
 Add multiple gems
 <pre>
 $ gemrat rspec capybara sidekiq
@@ -35,11 +30,7 @@ $ gemrat rspec capybara sidekiq
 #=> Bundling...
 </pre>
 
-<br/>
-
-
 Get help
-
 <pre>
 $ gemrat --help OR gemrat -h
 
@@ -58,7 +49,6 @@ Options:
 
 ![gemrat](http://i.qkme.me/3ut4r1.jpg)
 
-<br/>
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -72,8 +62,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install gemrat
-
-<br/>
 
 ## Development
 
