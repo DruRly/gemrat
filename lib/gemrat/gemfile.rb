@@ -20,7 +20,13 @@ module Gemrat
       attr_accessor :path
 
       def check(gem, file)
-        raise DuplicateGemFound unless file.grep(/gem ("|')#{gem.name}("|')/ ).empty?
+        grep_file = file.grep(/gem ("|')#{gem.name}("|'), ("|')#{gem.version}("|')/ )
+        raise DuplicateGemFound unless grep_file.empty?
+        current_gem_version = grep_file.to_s.gsub(/[^\d|.]/, '')
+      end
+
+      def file_regexp
+        Regexp.new("/gem (\"|')#{gem.name}(\"|')(|, (\"|')#{gem.version}(\"|'))/")
       end
   end
 end

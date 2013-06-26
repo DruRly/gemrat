@@ -104,7 +104,7 @@ describe Gemrat do
 
         context "when the gem is the newest version" do
           before do
-            test_gemfile = File.open("TestGemfile", "a")
+            test_gemfile = File.open("TestGemfile", "w")
             test_gemfile << ("https://rubygems.org'\n\n# Specify your gem's dependencies in gemrat.gemspec\ngem 'minitest', '6.0.0'\n")
             test_gemfile.close
           end
@@ -116,7 +116,7 @@ describe Gemrat do
 
           context "when there is a newer gem" do
             before do
-              test_gemfile = File.open("TestGemfile", "a")
+              test_gemfile = File.open("TestGemfile", "w")
               test_gemfile << ("https://rubygems.org'\n\n# Specify your gem's dependencies in gemrat.gemspec\ngem 'minitest', '5.9.0'\n")
               test_gemfile.close
             end
