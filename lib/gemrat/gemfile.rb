@@ -48,7 +48,7 @@ module Gemrat
       end
 
       def check(gem, file)
-        grep_file = file.grep(/gem ("|')#{gem.name}("|'), ("|')#{gem.version}("|')/ )
+        grep_file = file.grep(/.*#{gem.name}.*#{gem.version}.*/ )
         raise DuplicateGemFound unless grep_file.empty?
         current_gem_version = get_current_gem_version(gem, file)
 
@@ -71,7 +71,7 @@ module Gemrat
 
       def get_current_gem_version(gem, file)
         file.rewind
-        gem_version = file.grep(/gem ("|')#{gem.name}("|')[\W\d]+/)
+        gem_version = file.grep(/.*#{gem.name}.*/)
         gem_version = gem_version.to_s.gsub(/[^\d|.]+/, '')
         gem_version
       end
