@@ -174,9 +174,37 @@ describe Gemrat do
         end
       end
 
-      context "and the update is approved" do
+      context "and the update is approved with inputing y" do
         before do
           Gemrat::Gemfile.any_instance.stub(:input) { "y\n" }
+        end
+
+        let!(:output) { capture_stdout { Gemrat::Runner.run("minitest", "-g", "TestGemfile")} }
+
+        it "asks if you want to add the newer gem" do
+          output.should include("there is a newer version of the gem")
+        end
+
+        it "updates the gem version in the gemfile" do
+          File.read("TestGemfile").should match(/minitest.+5\.0\.5/)
+        end
+
+        it "informs that the gem has been updated to the newest version" do
+          output.should include("Updated 'minitest' to version '5.0.5'")
+        end
+
+        it "doesn't add gem twice in the gemfile" do
+          File.open("TestGemfile").grep(/minitest/).count.should eq(1)
+        end
+
+        it "runs bundle install" do
+          output.should include("Bundling...")
+        end
+      end
+
+      context "and the update is approved by pressing enter" do
+        before do
+          Gemrat::Gemfile.any_instance.stub(:input) { "\n" }
         end
 
         let!(:output) { capture_stdout { Gemrat::Runner.run("minitest", "-g", "TestGemfile")} }
