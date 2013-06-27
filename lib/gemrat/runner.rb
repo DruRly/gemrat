@@ -39,8 +39,7 @@ module Gemrat
 
       def with_error_handling
         yield
-      rescue Arguments::UnableToParse
-        puts Messages::USAGE
+      rescue Arguments::PrintHelp
       rescue Gem::NotFound
         puts Messages::GEM_NOT_FOUND.red % gem.name
         gem.invalid!

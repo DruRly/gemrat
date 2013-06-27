@@ -1,6 +1,6 @@
 module Gemrat
   class Arguments
-    class UnableToParse < StandardError; end
+    class PrintHelp < StandardError; end
 
     ATTRIBUTES = [:gems, :gemfile, :options]
 
@@ -29,7 +29,7 @@ module Gemrat
       def validate(opt_parser)
         if gem_names.empty? || gem_names.first.nil?
           puts opt_parser.help
-          exit
+          raise PrintHelp
         end
       end
 
@@ -47,7 +47,7 @@ module Gemrat
 
           opts.on_tail("-h", "--help", "# Print these usage instructions.") do
             puts opts
-            exit
+            raise PrintHelp
           end
         end
 
