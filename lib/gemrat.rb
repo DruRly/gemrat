@@ -1,4 +1,5 @@
 require "ostruct"
+require "optparse"
 
 require "gemrat/version"
 require "gemrat/messages"

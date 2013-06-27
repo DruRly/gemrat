@@ -11,9 +11,6 @@ module Gemrat
 
     Options:
 
-      -g [--gemfile]  # Specify the Gemfile to be used. Defaults to 'Gemfile'.
-      -h [--help]     # Print these usage instructions.
-
     USAGE
 
     GEM_NOT_FOUND = <<-GEM_NOT_FOUND.gsub /^( +)(\w+)/, '\2'

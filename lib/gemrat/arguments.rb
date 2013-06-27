@@ -10,10 +10,7 @@ module Gemrat
     def initialize(*args)
       self.arguments = *args
 
-      validate
-
       parse_options
-      #extract_options
     end
 
 
@@ -29,12 +26,11 @@ module Gemrat
 
       attr_accessor :arguments
 
-      def validate
-        raise UnableToParse if invalid?
-      end
-
-      def invalid?
-        gem_names.empty? || gem_names.first =~ /-h|--help/ || gem_names.first.nil?
+      def validate(opt_parser)
+        if gem_names.empty? || gem_names.first.nil?
+          puts opt_parser.help
+          exit
+        end
       end
 
       def parse_options
@@ -42,11 +38,22 @@ module Gemrat
 
         options.gemfile = "Gemfile"
 
-        OptionParser.new do |opts|
-          opts.on("-g", "--gemfile GEMFILE", "Specify the Gemfile to be used, defaults to 'Gemfile'") do |gemfile|
+        opt_parser = OptionParser.new do |opts|
+          opts.banner = Messages::USAGE
+
+          opts.on("-g", "--gemfile GEMFILE", "# Specify the Gemfile to be used, defaults to 'Gemfile'") do |gemfile|
             options.gemfile = gemfile
           end
-        end.parse!(arguments)
+
+          opts.on_tail("-h", "--help", "# Print these usage instructions.") do
+            puts opts
+            exit
+          end
+        end
+
+        opt_parser.parse!(arguments)
+        validate(opt_parser)
+
         self.gemfile = Gemfile.new(options.gemfile)
       end
 
