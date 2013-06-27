@@ -12,7 +12,8 @@ module Gemrat
 
       validate
 
-      extract_options
+      parse_options
+      #extract_options
     end
 
 
@@ -38,6 +39,15 @@ module Gemrat
 
       def parse_options
         self.options = OpenStruct.new
+
+        options.gemfile = "Gemfile"
+
+        OptionParser.new do |opts|
+          opts.on("-g", "--gemfile GEMFILE", "Specify the Gemfile to be used, defaults to 'Gemfile'") do |gemfile|
+            options.gemfile = gemfile
+          end
+        end.parse!(arguments)
+        self.gemfile = Gemfile.new(options.gemfile)
       end
 
       def extract_options
