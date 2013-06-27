@@ -58,9 +58,9 @@ module Gemrat
         print (Messages::NEWER_GEM_FOUND % [gem.name, gem.version, gem_version]).chomp + " "
         case input
         when /n|no/
-          gem.update!
-        else
           gem.skip!
+        else
+          gem.update!
         end
       end
 

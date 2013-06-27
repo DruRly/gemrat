@@ -1,3 +1,5 @@
+require "ostruct"
+
 require "gemrat/version"
 require "gemrat/messages"
 require "gemrat/runner"
@@ -5,7 +7,6 @@ require "gemrat/arguments"
 require "gemrat/gem"
 require "gemrat/gemfile"
 
-require "ostruct"
 require "colored"
 require "rbconfig"
 
