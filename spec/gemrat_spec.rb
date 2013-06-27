@@ -74,7 +74,7 @@ describe Gemrat do
         it "adds the gem without the version" do
           output.should include("'sinatra' added to your Gemfile")
           gemfile_contents = File.open('TestGemfile', 'r').read
-          gemfile_contents.should include("gem 'sinatra'")
+          gemfile_contents.should =~ /gem 'sinatra'$/
         end
 
         it "runs bundle install" do

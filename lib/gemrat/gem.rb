@@ -2,7 +2,7 @@ module Gemrat
   class Gem
     class NotFound < StandardError; end
 
-    attr_accessor :name, :valid, :action, :no_version
+    attr_accessor :name, :valid, :action
     alias_method :valid?, :valid
 
     ACTIONS = OpenStruct.new({:add => "add", :update => "update",
@@ -15,11 +15,7 @@ module Gemrat
     end
 
     def to_s
-      if no_version?
-        @output ||= "gem '#{name}'"
-      else
-        @output ||= "gem '#{name}', '#{version}'"
-      end
+      @output ||= "gem '#{name}', '#{version}'"
     end
 
     def invalid!
@@ -59,11 +55,11 @@ module Gemrat
     end
 
     def no_version!
-      self.no_version = ACTIONS.no_version
+      self.action = ACTIONS.no_version
     end
 
     def no_version?
-      self.no_version == ACTIONS.no_version
+      self.action == ACTIONS.no_version
     end
 
     private
