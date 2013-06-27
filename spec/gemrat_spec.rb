@@ -103,7 +103,8 @@ describe Gemrat do
   end
 
   ["when gem name is left out from the arguments", "",
-   "when -h or --help is given in the arguments", "-h"].each_slice(2) do |ctx, arg|
+   "when -h is given in the arguments", "-h",
+   "when --help is given in the arguments", "--help"].each_slice(2) do |ctx, arg|
     context ctx do
       it "prints usage" do
         output = capture_stdout { Gemrat::Runner.run(arg == "" ? nil : arg) }
@@ -112,10 +113,13 @@ describe Gemrat do
     end
   end
 
-  context "when -v or --version is given in the arguments" do
-    it "prints gemrat version" do
-      output = capture_stdout { Gemrat::Runner.run("-v") }
-      output.should include(Gemrat::VERSION)
+  ["when -v is given in the arguments", "-v",
+   "when --version is given in the arginemts", "--version"].each_slice(2) do |ctx, arg|
+    context ctx do
+      it "prints gemrat version" do
+        output = capture_stdout { Gemrat::Runner.run(arg) }
+        output.should include(Gemrat::VERSION)
+      end
     end
   end
 
