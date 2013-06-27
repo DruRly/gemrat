@@ -57,7 +57,7 @@ module Gemrat
       def prompt_gem_replacement(gem, gem_version)
         print (Messages::NEWER_GEM_FOUND % [gem.name, gem.version, gem_version]).chomp + " "
         case input
-        when /y|yes/
+        when /n|no/
           gem.update!
         else
           gem.skip!
