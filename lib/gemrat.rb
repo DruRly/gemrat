@@ -5,6 +5,7 @@ require "gemrat/arguments"
 require "gemrat/gem"
 require "gemrat/gemfile"
 
+require "ostruct"
 require "colored"
 require "rbconfig"
 

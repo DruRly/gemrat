@@ -1,5 +1,3 @@
-require "ostruct"
-
 module Gemrat
   class Gem
     class NotFound < StandardError; end
