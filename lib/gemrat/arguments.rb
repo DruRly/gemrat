@@ -2,13 +2,12 @@ module Gemrat
   class Arguments
     class UnableToParse < StandardError; end
 
-    ATTRIBUTES = [:gems, :gemfile, :replace_gem]
+    ATTRIBUTES = [:gems, :gemfile]
 
     ATTRIBUTES.each { |arg| attr_accessor arg }
 
 
     def initialize(*args)
-      self.replace_gem = true
       self.arguments = *args
 
       validate
