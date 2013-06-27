@@ -5,3 +5,4 @@ design.txt
 Gemfile.lock
 .ruby-gemset
 .ruby-version
+/tmp
