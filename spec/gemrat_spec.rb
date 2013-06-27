@@ -112,6 +112,13 @@ describe Gemrat do
     end
   end
 
+  context "when -v or --version is given in the arguments" do
+    it "prints gemrat version" do
+      output = capture_stdout { Gemrat::Runner.run("-v") }
+      output.should include(Gemrat::VERSION)
+    end
+  end
+
   context "when gem is not found" do
     before do
       Gemrat::Runner.stub(:gem) do

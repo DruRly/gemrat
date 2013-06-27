@@ -53,6 +53,11 @@ module Gemrat
           opts.on("--no-install", "# Skip executing bundle after adding the gem.") do
             options.no_install = true
           end
+
+          opts.on("-v", "--version", "# Show current gemrat version.") do
+            puts Gemrat::VERSION
+            raise PrintHelp
+          end
         end
 
         opt_parser.parse!(arguments)
