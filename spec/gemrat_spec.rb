@@ -177,16 +177,12 @@ describe Gemrat do
       context "and the update is approved" do
         before do
           Gemrat::Gemfile.any_instance.stub(:input) { "y\n" }
-          
-          # you may ask yourself why does it use an instance here. 
-          # it's just because #let trolls really hard, so we have to prevent its trolling
-          # with this one. nothing to see here, move on.
-          @output = capture_stdout { Gemrat::Runner.run("minitest", "-g", "TestGemfile")}
         end
 
+        let!(:output) { capture_stdout { Gemrat::Runner.run("minitest", "-g", "TestGemfile")} }
 
         it "asks if you want to add the newer gem" do
-          @output.should include("there is a newer version of the gem")
+          output.should include("there is a newer version of the gem")
         end
 
         it "updates the gem version in the gemfile" do
@@ -194,7 +190,7 @@ describe Gemrat do
         end
 
         it "informs that the gem has been updated to the newest version" do
-          @output.should include("Updated 'minitest' to version '5.0.5'")
+          output.should include("Updated 'minitest' to version '5.0.5'")
         end
 
         it "doesn't add gem twice in the gemfile" do
@@ -202,7 +198,7 @@ describe Gemrat do
         end
 
         it "runs bundle install" do
-          @output.should include("Bundling...")
+          output.should include("Bundling...")
         end
       end
     end
