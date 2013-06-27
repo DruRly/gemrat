@@ -14,6 +14,13 @@ describe Gemrat do
       end
       alias_method :fetch_all, :stubbed_response
     end
+
+    class Gemrat::Runner
+      def stub_bundle
+        puts "Bundling...".green
+      end
+      alias_method :run_bundle, :stub_bundle
+    end
   end
 
   after :each do
