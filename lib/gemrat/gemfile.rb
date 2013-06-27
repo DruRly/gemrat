@@ -15,9 +15,20 @@ module Gemrat
 
       check(gem, file)
 
-      if gem.replace_gem == true
-        file << "\n#{gem}"
+      if gem.add?
+        file.write "\n#{gem}"
         puts "#{gem} added to your Gemfile.".green
+
+        needs_bundle!
+      elsif gem.update?
+        contents = File.read(path)
+        File.open(path,'w') do |f|
+          f.print contents.gsub(/^.*#{gem.name}.*$/, "#{gem}")
+
+          f.close
+        end
+
+        puts "Updated '#{gem.name}' to version '#{gem.version}'.".green
         needs_bundle!
       end
     ensure
@@ -47,9 +58,9 @@ module Gemrat
         print (Messages::NEWER_GEM_FOUND % [gem.name, gem.version, gem_version]).chomp + " "
         case input
         when /y|yes/
-          gem.replace_gem = true
+          gem.update!
         else
-          gem.replace_gem = false
+          gem.skip!
         end
       end
 

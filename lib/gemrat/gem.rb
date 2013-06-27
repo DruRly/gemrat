@@ -1,13 +1,17 @@
+require "ostruct"
 module Gemrat
   class Gem
     class NotFound < StandardError; end
 
-    attr_accessor :name, :valid, :replace_gem
+    attr_accessor :name, :valid, :action
     alias_method :valid?, :valid
+
+    ACTIONS = OpenStruct.new({:add => "add", :update => "update", :skip => "skip"})
 
     def initialize
       self.valid = true
-      self.replace_gem = true
+      
+      add!
     end
 
     def to_s
@@ -22,6 +26,29 @@ module Gemrat
       normalize_name.gsub(/[^\d|.]/, '')
     end
 
+    def update!
+      self.action = ACTIONS.update
+    end
+
+    def update?
+      self.action == ACTIONS.update
+    end
+
+    def skip!
+      self.action = ACTIONS.skip
+    end
+
+    def skip?
+      self.action == ACTIONS.skip
+    end
+    
+    def add!
+      self.action = ACTIONS.add
+    end
+
+    def add?
+      self.action == ACTIONS.add
+    end
 
     private
       def normalize_name

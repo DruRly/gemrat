@@ -42,151 +42,167 @@ describe Gemrat do
     File.delete("TestGemfile")
   end
 
-  describe Gemrat::Runner do
-    subject { Gemrat::Runner }
-    describe "#run" do
-      context "when valid arguments are given" do
-        context "for one gem" do
-          let(:output) { capture_stdout { subject.run("sinatra", "-g", "TestGemfile") }}
-          it "adds lastest gem version to gemfile" do
-            output.should include("'sinatra', '1.4.3' added to your Gemfile")
-            gemfile_contents = File.open('TestGemfile', 'r').read
-            gemfile_contents.should include("gem 'sinatra', '1.4.3'")
-          end
+  context "when valid arguments are given" do
+    context "for one gem" do
+      let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile") }}
 
-          it "runs bundle install" do
-            output.should include("Bundling")
-          end
-        end
-
-        context "for multiple gems" do
-          let(:output) { capture_stdout { subject.run("sinatra", "rails", "minitest", "-g", "TestGemfile") } }
-          it "adds latest gem versions to the gemfile" do
-            output.should include("'sinatra', '1.4.3' added to your Gemfile")
-            output.should include("'minitest', '5.0.5' added to your Gemfile")
-            output.should include("'rails', '3.2.13' added to your Gemfile")
-            gemfile_contents = File.open('TestGemfile', 'r').read
-            gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
-            gemfile_contents.should include("\ngem 'minitest', '5.0.5'")
-            gemfile_contents.should include("\ngem 'rails', '3.2.13'")
-          end
-
-          it "runs bundle install" do
-            output.should include("Bundling")
-          end
-
-          context "when one of the gems is invalid" do
-            let(:output)  { capture_stdout { subject.run("sinatra", "beer_maker_2000", "minitest", "-g", "TestGemfile") } }
-
-            it "adds valid gems to the gemfile" do
-              output.should include("'sinatra', '1.4.3' added to your Gemfile")
-              output.should include("'minitest', '5.0.5' added to your Gemfile")
-              output.should include("#{Gemrat::Messages::GEM_NOT_FOUND % "beer_maker_2000"}")
-            end
-            
-            it "runs bundle install" do
-              output.should include("Bundling")
-            end
-          end
-        end
+      it "adds latest gem version to gemfile" do
+        output.should include("'sinatra', '1.4.3' added to your Gemfile")
+        gemfile_contents = File.open('TestGemfile', 'r').read
+        gemfile_contents.should include("gem 'sinatra', '1.4.3'")
       end
 
-      ["when gem name is left out from the arguments", "",
-       "when -h or --help is given in the arguments", "-h"].each_slice(2) do |ctx, arg|
-        context ctx do
-          it "prints usage" do
-            output = capture_stdout { subject.run(arg == "" ? nil : arg) }
-            output.should include(Gemrat::Messages::USAGE)
-          end
-        end
+      it "runs bundle install" do
+        output.should include("Bundling")
+      end
+    end
+
+    context "for multiple gems" do
+      let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "rails", "minitest", "-g", "TestGemfile") } }
+      it "adds latest gem versions to the gemfile" do
+        output.should include("'sinatra', '1.4.3' added to your Gemfile")
+        output.should include("'minitest', '5.0.5' added to your Gemfile")
+        output.should include("'rails', '3.2.13' added to your Gemfile")
+        gemfile_contents = File.open('TestGemfile', 'r').read
+        gemfile_contents.should include("\ngem 'sinatra', '1.4.3'")
+        gemfile_contents.should include("\ngem 'minitest', '5.0.5'")
+        gemfile_contents.should include("\ngem 'rails', '3.2.13'")
       end
 
-      context "when gem is not found" do
+      it "runs bundle install" do
+        output.should include("Bundling")
+      end
+
+      context "when one of the gems is invalid" do
+        let(:output)  { capture_stdout { Gemrat::Runner.run("sinatra", "beer_maker_2000", "minitest", "-g", "TestGemfile") } }
+
+        it "adds valid gems to the gemfile" do
+          output.should include("'sinatra', '1.4.3' added to your Gemfile")
+          output.should include("'minitest', '5.0.5' added to your Gemfile")
+          output.should include("#{Gemrat::Messages::GEM_NOT_FOUND % "beer_maker_2000"}")
+        end
+
+        it "runs bundle install" do
+          output.should include("Bundling")
+        end
+      end
+    end
+  end
+
+  ["when gem name is left out from the arguments", "",
+    "when -h or --help is given in the arguments", "-h"].each_slice(2) do |ctx, arg|
+    context ctx do
+      it "prints usage" do
+        output = capture_stdout { Gemrat::Runner.run(arg == "" ? nil : arg) }
+        output.should include(Gemrat::Messages::USAGE)
+      end
+    end
+    end
+
+  context "when gem is not found" do
+    before do
+      Gemrat::Runner.stub(:gem) do
+        gem = Gem.new
+        gem.invalid!
+      end
+      @gem_name = "unexistent_gem"
+    end
+
+    let(:output) { capture_stdout { Gemrat::Runner.run(@gem_name) } }
+
+    it "prints a nice error message" do
+      output.should include("#{Gemrat::Messages::GEM_NOT_FOUND % @gem_name}")
+    end
+
+    it "skips bundle install" do
+      output.should_not include("Bundling...")
+    end
+  end
+
+  context "when gem already exists in a gemfile" do
+
+    context "and the gem is the newest version" do
+      before do
+        test_gemfile = File.open("TestGemfile", "w")
+        test_gemfile << %Q{https://rubygems.org'
+                               # Specify your gem's dependencies in gemrat.gemspec
+                               gem 'minitest', '5.0.5'}
+        test_gemfile.close
+      end
+
+      let(:output) { capture_stdout { Gemrat::Runner.run("minitest", "-g", "TestGemfile")} }
+
+      it "informs that the gem already exists" do
+        output.should include("gem 'minitest' already exists")
+      end
+
+      it "skips bundle install" do
+        output.should_not include("Bundling...")
+      end
+    end
+
+    context "and there is a newer version" do
+      before do
+        test_gemfile = File.open("TestGemfile", "w")
+        test_gemfile << %Q{https://rubygems.org'
+                               # Specify your gem's dependencies in gemrat.gemspec
+                               gem 'minitest', '5.0.4'}
+        test_gemfile.close
+      end
+
+      context "and the update is rejected" do
         before do
-          subject.stub(:gem) do
-            gem = Gem.new
-            gem.invalid!
-          end
-          @gem_name = "unexistent_gem"
+          Gemrat::Gemfile.any_instance.stub(:input) { "no\n" }
         end
 
-        let(:output) { capture_stdout { subject.run(@gem_name) } }
+        let(:output) { capture_stdout { Gemrat::Runner.run("minitest", "-g", "TestGemfile")} }
 
-        it "prints a nice error message" do
-          output.should include("#{Gemrat::Messages::GEM_NOT_FOUND % @gem_name}")
+        it "informs about the new gem version" do
+          output.should include("there is a newer version of the gem")
         end
-        
+
+        it "doesn't add the new gem version in the gemfile" do
+          File.read("TestGemfile").should_not match(/minitest.+5\.0\.5/)
+        end
+
+        it "leaves the old gem version in the gemfile" do
+          File.read("TestGemfile").should match(/minitest.+5\.0\.4/)
+        end
+
         it "skips bundle install" do
           output.should_not include("Bundling...")
         end
       end
 
-      context "when gem already exists in a Gemfile" do
-
-        context "when the gem is the newest version" do
-          before do
-            test_gemfile = File.open("TestGemfile", "w")
-            test_gemfile << %Q{https://rubygems.org'
-                               # Specify your gem's dependencies in gemrat.gemspec
-                               gem 'minitest', '5.0.5'}
-            test_gemfile.close
-          end
-
-          let(:output) { capture_stdout { subject.run("minitest", "-g", "TestGemfile")} }
-
-          it "inform that the gem already exists" do
-            output.should include("gem 'minitest' already exists")
-          end
-
-          it "skips bundle install" do
-            output.should_not include("Bundling...")
-          end
+      context "and the update is approved" do
+        before do
+          Gemrat::Gemfile.any_instance.stub(:input) { "y\n" }
+          
+          # you may ask yourself why does it use an instance here. 
+          # it's just because #let trolls really hard, so we have to prevent its trolling
+          # with this one. nothing to see here, move on.
+          @output = capture_stdout { Gemrat::Runner.run("minitest", "-g", "TestGemfile")}
         end
 
-        context "when there is a newer gem" do
-          before do
-            test_gemfile = File.open("TestGemfile", "w")
-            test_gemfile << %Q{https://rubygems.org'
-                               # Specify your gem's dependencies in gemrat.gemspec
-                               gem 'minitest', '5.0.4'}
-            test_gemfile.close
-          end
 
-          context "when the update is rejected" do
-            before do
-              Gemrat::Gemfile.any_instance.stub(:input) { "no\n" }
-            end
+        it "asks if you want to add the newer gem" do
+          @output.should include("there is a newer version of the gem")
+        end
 
-            let(:output) { capture_stdout { subject.run("minitest", "-g", "TestGemfile")} }
+        it "updates the gem version in the gemfile" do
+          File.read("TestGemfile").should match(/minitest.+5\.0\.5/)
+        end
 
-            it "informs about the new gem version" do
-              output.should include("there is a newer version of the gem")
-            end
+        it "informs that the gem has been updated to the newest version" do
+          @output.should include("Updated 'minitest' to version '5.0.5'")
+        end
 
-            it "skips bundle install" do
-              output.should_not include("Bundling...")
-            end
-          end
+        it "doesn't add gem twice in the gemfile" do
+          File.open("TestGemfile").grep(/minitest/).count.should eq(1)
+        end
 
-          context "when the update is approved" do
-            before do
-              Gemrat::Gemfile.any_instance.stub(:input) { "y\n" }
-            end
-
-            let(:output) { capture_stdout { subject.run("minitest", "-g", "TestGemfile")} }
-
-            it "asks if you want to add the newer gem" do
-              output.should include("there is a newer version of the gem")
-            end
-
-            it "informs that the new gem version has been added" do
-              output.should include("gem 'minitest', '5.0.5' added to your Gemfile")
-            end
-
-            it "runs bundle install" do
-              output.should include("Bundling...")
-            end
-          end
+        it "runs bundle install" do
+          @output.should include("Bundling...")
         end
       end
     end
