@@ -55,6 +55,19 @@ describe Gemrat do
       it "runs bundle install" do
         output.should include("Bundling")
       end
+
+      context "when the --no-install flag is given" do
+        let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", "--no-install") }}
+        it "adds latest gem version to gemfile" do
+          output.should include("'sinatra', '1.4.3' added to your Gemfile")
+          gemfile_contents = File.open('TestGemfile', 'r').read
+          gemfile_contents.should include("gem 'sinatra', '1.4.3'")
+        end
+
+        it "does not run bundle install" do
+          output.should_not include("Bundling")
+        end
+      end
     end
 
     context "for multiple gems" do
@@ -203,7 +216,7 @@ describe Gemrat do
             output.should include("Bundling...")
           end
         end
-        end
       end
     end
   end
+end

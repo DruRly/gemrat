@@ -49,6 +49,10 @@ module Gemrat
             puts opts
             raise PrintHelp
           end
+
+          opts.on("--no-install", "# Skip executing bundle after adding the gem.") do
+            options.no_install = true
+          end
         end
 
         opt_parser.parse!(arguments)

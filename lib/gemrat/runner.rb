@@ -28,12 +28,13 @@ module Gemrat
 
     private
 
-      attr_accessor :gems, :gemfile
+      attr_accessor :gems, :gemfile, :no_install
 
       def parse_arguments(*args)
         Arguments.new(*args).tap do |a|
           self.gems      = a.gems
           self.gemfile   = a.gemfile
+          self.no_install = a.options.no_install
         end
       end
 
@@ -57,9 +58,10 @@ module Gemrat
 
       def skip_bundle?
         gems.nil? ||
-          gems.empty? ||
-          gems.select(&:valid?).empty? ||
-          !gemfile.needs_bundle?
+        gems.empty? ||
+        gems.select(&:valid?).empty? ||
+        !gemfile.needs_bundle? ||
+        no_install
       end
 
       def run_bundle
