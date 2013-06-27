@@ -2,7 +2,7 @@ module Gemrat
   class Arguments
     class UnableToParse < StandardError; end
 
-    ATTRIBUTES = [:gems, :gemfile]
+    ATTRIBUTES = [:gems, :gemfile, :options]
 
     ATTRIBUTES.each { |arg| attr_accessor arg }
 
@@ -34,6 +34,10 @@ module Gemrat
 
       def invalid?
         gem_names.empty? || gem_names.first =~ /-h|--help/ || gem_names.first.nil?
+      end
+
+      def parse_options
+        self.options = OpenStruct.new
       end
 
       def extract_options
