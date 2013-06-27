@@ -90,14 +90,14 @@ describe Gemrat do
   end
 
   ["when gem name is left out from the arguments", "",
-    "when -h or --help is given in the arguments", "-h"].each_slice(2) do |ctx, arg|
+   "when -h or --help is given in the arguments", "-h"].each_slice(2) do |ctx, arg|
     context ctx do
       it "prints usage" do
         output = capture_stdout { Gemrat::Runner.run(arg == "" ? nil : arg) }
         output.should include(Gemrat::Messages::USAGE)
       end
     end
-    end
+  end
 
   context "when gem is not found" do
     before do
@@ -174,61 +174,36 @@ describe Gemrat do
         end
       end
 
-      context "and the update is approved with inputing y" do
-        before do
-          Gemrat::Gemfile.any_instance.stub(:input) { "y\n" }
+      ["and the update is approved with inputing y", "y\n",
+       "and the update is approved by pressing enter", "\n"].each_slice(2) do |ctx, arg|
+        context ctx do
+          before do
+            Gemrat::Gemfile.any_instance.stub(:input) { arg }
+          end
+
+          let!(:output) { capture_stdout { Gemrat::Runner.run("minitest", "-g", "TestGemfile")} }
+
+          it "asks if you want to add the newer gem" do
+            output.should include("there is a newer version of the gem")
+          end
+
+          it "updates the gem version in the gemfile" do
+            File.read("TestGemfile").should match(/minitest.+5\.0\.5/)
+          end
+
+          it "informs that the gem has been updated to the newest version" do
+            output.should include("Updated 'minitest' to version '5.0.5'")
+          end
+
+          it "doesn't add gem twice in the gemfile" do
+            File.open("TestGemfile").grep(/minitest/).count.should eq(1)
+          end
+
+          it "runs bundle install" do
+            output.should include("Bundling...")
+          end
         end
-
-        let!(:output) { capture_stdout { Gemrat::Runner.run("minitest", "-g", "TestGemfile")} }
-
-        it "asks if you want to add the newer gem" do
-          output.should include("there is a newer version of the gem")
-        end
-
-        it "updates the gem version in the gemfile" do
-          File.read("TestGemfile").should match(/minitest.+5\.0\.5/)
-        end
-
-        it "informs that the gem has been updated to the newest version" do
-          output.should include("Updated 'minitest' to version '5.0.5'")
-        end
-
-        it "doesn't add gem twice in the gemfile" do
-          File.open("TestGemfile").grep(/minitest/).count.should eq(1)
-        end
-
-        it "runs bundle install" do
-          output.should include("Bundling...")
-        end
-      end
-
-      context "and the update is approved by pressing enter" do
-        before do
-          Gemrat::Gemfile.any_instance.stub(:input) { "\n" }
-        end
-
-        let!(:output) { capture_stdout { Gemrat::Runner.run("minitest", "-g", "TestGemfile")} }
-
-        it "asks if you want to add the newer gem" do
-          output.should include("there is a newer version of the gem")
-        end
-
-        it "updates the gem version in the gemfile" do
-          File.read("TestGemfile").should match(/minitest.+5\.0\.5/)
-        end
-
-        it "informs that the gem has been updated to the newest version" do
-          output.should include("Updated 'minitest' to version '5.0.5'")
-        end
-
-        it "doesn't add gem twice in the gemfile" do
-          File.open("TestGemfile").grep(/minitest/).count.should eq(1)
-        end
-
-        it "runs bundle install" do
-          output.should include("Bundling...")
         end
       end
     end
   end
-end
