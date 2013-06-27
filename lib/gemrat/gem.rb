@@ -1,4 +1,5 @@
 require "ostruct"
+
 module Gemrat
   class Gem
     class NotFound < StandardError; end
@@ -15,7 +16,7 @@ module Gemrat
     end
 
     def to_s
-      @normalized_name ||= normalize_name
+      @output ||= "gem '#{name}', '#{version}'"
     end
 
     def invalid!
@@ -23,7 +24,11 @@ module Gemrat
     end
 
     def version
-      normalize_name.gsub(/[^\d|.]/, '')
+      if platform_dependent?
+        platform_dependent_version
+      else
+        standard_version
+      end
     end
 
     def update!
@@ -51,6 +56,38 @@ module Gemrat
     end
 
     private
+
+      def platform_dependent?
+        versions.count > 1
+      end
+
+      def standard_version
+        normalize_name.gsub(/[^\d\.]/, '')
+      end
+
+      def versions
+        platform_versions = normalize_name.gsub(/'/,"").split(",")[1..-1]
+
+        hash = {:default => platform_versions.shift}
+
+        platform_versions.inject(hash) do |hash, part|
+          hash[part.split(" ")[1..-1]] = part.split(" ").first
+          hash
+        end
+      end
+
+      def platform_dependent_version
+        version_for_platform = versions.select do |key, value|
+          key.join =~ /#{SYSTEM}/ if key.is_a? Array
+        end.values
+
+        if version_for_platform.empty?
+          versions[:default].strip
+        else
+          version_for_platform.first
+        end
+      end
+
       def normalize_name
         normalized = ("gem " + find_exact_match).gsub(/[()]/, "'")
         normalized.gsub(/#{name}/, "'#{name}',")
