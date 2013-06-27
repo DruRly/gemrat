@@ -68,6 +68,19 @@ describe Gemrat do
           output.should_not include("Bundling")
         end
       end
+
+      context "when the --no-version flag is given" do
+        let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", "--no-version") }}
+        it "adds the gem without the version" do
+          output.should include("'sinatra' added to your Gemfile")
+          gemfile_contents = File.open('TestGemfile', 'r').read
+          gemfile_contents.should include("gem 'sinatra'")
+        end
+
+        it "runs bundle install" do
+          output.should include("Bundling")
+        end
+      end
     end
 
     context "for multiple gems" do

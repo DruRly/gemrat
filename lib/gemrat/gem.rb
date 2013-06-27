@@ -2,19 +2,24 @@ module Gemrat
   class Gem
     class NotFound < StandardError; end
 
-    attr_accessor :name, :valid, :action
+    attr_accessor :name, :valid, :action, :no_version
     alias_method :valid?, :valid
 
-    ACTIONS = OpenStruct.new({:add => "add", :update => "update", :skip => "skip"})
+    ACTIONS = OpenStruct.new({:add => "add", :update => "update",
+                              :skip => "skip", :no_version => "no version"})
 
     def initialize
       self.valid = true
-      
+
       add!
     end
 
     def to_s
-      @output ||= "gem '#{name}', '#{version}'"
+      if no_version?
+        @output ||= "gem '#{name}'"
+      else
+        @output ||= "gem '#{name}', '#{version}'"
+      end
     end
 
     def invalid!
@@ -53,6 +58,14 @@ module Gemrat
       self.action == ACTIONS.add
     end
 
+    def no_version!
+      self.no_version = ACTIONS.no_version
+    end
+
+    def no_version?
+      self.no_version == ACTIONS.no_version
+    end
+
     private
 
       def platform_dependent?
@@ -87,8 +100,12 @@ module Gemrat
       end
 
       def normalize_name
-        normalized = ("gem " + find_exact_match).gsub(/[()]/, "'")
-        normalized.gsub(/#{name}/, "'#{name}',")
+        if no_version?
+          normalized = ("gem '" + name + "'")
+        else
+          normalized = ("gem " + find_exact_match).gsub(/[()]/, "'")
+          normalized.gsub(/#{name}/, "'#{name}',")
+        end
       end
 
       def find_exact_match

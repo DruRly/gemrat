@@ -28,13 +28,14 @@ module Gemrat
 
     private
 
-      attr_accessor :gems, :gemfile, :no_install
+      attr_accessor :gems, :gemfile, :no_install, :no_version
 
       def parse_arguments(*args)
         Arguments.new(*args).tap do |a|
           self.gems      = a.gems
           self.gemfile   = a.gemfile
           self.no_install = a.options.no_install
+          self.no_version = a.options.no_version
         end
       end
 
@@ -51,8 +52,15 @@ module Gemrat
 
       def for_each_gem
         gems && gems.each do |gem|
+          set_no_version(gem)
           self.gem = gem
           yield
+        end
+      end
+
+      def set_no_version(gem)
+        if no_version
+          gem.no_version!
         end
       end
 

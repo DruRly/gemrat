@@ -45,13 +45,17 @@ module Gemrat
             options.gemfile = gemfile
           end
 
+          opts.on("--no-install", "# Skip executing bundle after adding the gem.") do
+            options.no_install = true
+          end
+
+          opts.on("--no-version", "# Do not add a version to the gemfile.") do
+            options.no_version = true
+          end
+
           opts.on_tail("-h", "--help", "# Print these usage instructions.") do
             puts opts
             raise PrintHelp
-          end
-
-          opts.on("--no-install", "# Skip executing bundle after adding the gem.") do
-            options.no_install = true
           end
 
           opts.on("-v", "--version", "# Show current gemrat version.") do

@@ -15,6 +15,7 @@ module Gemrat
 
       check(gem, file)
 
+
       if gem.add?
         file.write "\n#{gem}"
         puts "#{gem} added to your Gemfile.".green
@@ -27,7 +28,6 @@ module Gemrat
 
           f.close
         end
-
         puts "Updated '#{gem.name}' to version '#{gem.version}'.".green
         needs_bundle!
       end
