@@ -57,16 +57,6 @@ module Gemrat
         self.gemfile = Gemfile.new(options.gemfile)
       end
 
-      def extract_options
-        options  = arguments - gem_names
-        opts     = Hash[*options]
-
-        self.gemfile  = Gemfile.new(opts.delete("-g") || opts.delete("--gemfile") || "Gemfile")
-      rescue ArgumentError
-        raise UnableToParse
-        # unable to extract options, leave them nil
-      end
-
       def gem_names
         arguments.take_while { |arg| arg !~ /^-|^--/}
       end
