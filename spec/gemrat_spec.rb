@@ -81,6 +81,16 @@ describe Gemrat do
           output.should include("Bundling")
         end
       end
+
+      context "when the --environment or -e flag is given" do
+        let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", "--environment test") }}
+        it "adds the gem to the specifiyed environment" do
+          output.should include "'sinatra' added to test environment in your Gemfile"
+          gemfile_contents = File.open('TestGemfile', 'r').read
+          gemfile_contents.should include("group :test do")
+          gemfile_contents.should include("gem 'sinatra', '1.4.3'")
+        end
+      end
     end
 
     context "for multiple gems" do
@@ -133,6 +143,13 @@ describe Gemrat do
         output = capture_stdout { Gemrat::Runner.run(arg) }
         output.should include(Gemrat::VERSION)
       end
+    end
+  end
+
+  context "when a non-existant flag is given in the arguments" do
+    it "prints out the help message" do
+      output = capture_stdout { Gemrat::Runner.run("--doesnt-exist") }
+      output.should include(Gemrat::Messages::USAGE)
     end
   end
 
