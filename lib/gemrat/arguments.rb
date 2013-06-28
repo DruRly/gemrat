@@ -64,7 +64,12 @@ module Gemrat
           end
         end
 
-        opt_parser.parse!(arguments)
+        begin
+          opt_parser.parse!(arguments)
+        rescue OptionParser::InvalidOption
+          puts opt_parser
+          raise PrintHelp
+        end
         validate(opt_parser)
 
         self.gemfile = Gemfile.new(options.gemfile)
