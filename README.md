@@ -65,8 +65,16 @@ Or install it yourself as:
 
 ## Development
 
-Run the test suite with:
+Run the entire test suite with:
 
 <pre>
 $ rake
 </pre>
+
+We encourage you to run
+
+<pre>
+$ guard
+</pre>
+
+in development, because it's awesome!

@@ -18,75 +18,58 @@ module Gemrat
 
     def run
       for_each_gem do
-        with_error_handling do
-
-          find_exact_match
-          ensure_gem_exists
-          normalize_for_gemfile
-          add_to_gemfile
-
-        end
+        with_error_handling { gemfile.add(gem) }
       end
 
-      run_bundle unless gems.nil? || gems.empty? || gems.select(&:valid?).empty?
+      run_bundle unless skip_bundle?
     end
 
     attr_accessor :gem
 
     private
 
-      attr_accessor :gems, :gemfile, :exact_match
+      attr_accessor :gems, :gemfile, :no_install, :no_version
 
       def parse_arguments(*args)
         Arguments.new(*args).tap do |a|
-          self.gems      = a.gem_names.map {|name| Gem.new(name) }
+          self.gems      = a.gems
           self.gemfile   = a.gemfile
+          self.no_install = a.options.no_install
+          self.no_version = a.options.no_version
         end
       end
 
       def with_error_handling
         yield
-      rescue ArgumentError
-        puts Messages::USAGE
-      rescue GemNotFound
+      rescue Arguments::PrintHelp
+      rescue Gem::NotFound
         puts Messages::GEM_NOT_FOUND.red % gem.name
+        gem.invalid!
+      rescue Gemfile::DuplicateGemFound
+        puts Messages::DUPLICATE_GEM_FOUND % gem.name
         gem.invalid!
       end
 
       def for_each_gem
         gems && gems.each do |gem|
+          set_no_version(gem)
           self.gem = gem
           yield
         end
       end
 
-      def find_exact_match
-        self.exact_match = find_all(gem.name).reject { |n| /^#{gem.name} / !~ n }.first
+      def set_no_version(gem)
+        if no_version
+          gem.no_version!
+        end
       end
 
-      def find_all(name)
-        fetch_all(name).split(/\n/)
-      end
-
-      def fetch_all(name)
-        `gem search -r #{name}`
-      end
-
-      def ensure_gem_exists
-        raise GemNotFound if exact_match.nil?
-      end
-
-      def normalize_for_gemfile
-        gem_name = exact_match.split.first
-        normalized = ("gem " + exact_match).gsub(/[()]/, "'")
-        self.gem.name = normalized.gsub(/#{gem_name}/, "'#{gem_name}',")
-      end
-
-      def add_to_gemfile
-        new_gemfile = File.open(gemfile, 'a')
-        new_gemfile << "\n#{gem.name}\n"
-        new_gemfile.close
-        puts "#{gem.name} added to your Gemfile.".green
+      def skip_bundle?
+        gems.nil? ||
+        gems.empty? ||
+        gems.select(&:valid?).empty? ||
+        !gemfile.needs_bundle? ||
+        no_install
       end
 
       def run_bundle
