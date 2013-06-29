@@ -82,7 +82,7 @@ describe Gemrat do
         end
       end
 
-      context "when the --environment or -e flag is given" do
+      pending "when the --environment or -e flag is given" do
         let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", "--environment test") }}
         it "adds the gem to the specifiyed environment" do
           output.should include "'sinatra' added to test environment in your Gemfile"
