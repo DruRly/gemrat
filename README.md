@@ -32,7 +32,7 @@ $ gemrat rspec capybara sidekiq
 
 Get help
 <pre>
-$ gemrat --help OR gemrat -h
+$ gemrat
 
 Gemrat
 
@@ -42,8 +42,11 @@ Usage: gemrat [GEM_NAME] [OPTIONS]
 
 Options:
 
-  -g [--gemfile]  # Specify the Gemfile to be used. Defaults to 'Gemfile'.
-  -h [--help]     # Print these usage instructions.
+    -g, --gemfile GEMFILE            # Specify the Gemfile to be used, defaults to 'Gemfile'
+        --no-install                 # Skip executing bundle after adding the gem.
+        --no-version                 # Do not add a version to the gemfile.
+    -v, --version                    # Show current gemrat version.
+    -h, --help                       # Print these usage instructions.
 </pre>
 <br/>
 
