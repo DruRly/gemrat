@@ -53,6 +53,14 @@ module Gemrat
             options.no_version = true
           end
 
+          opts.on("--pessimistic", "# Add gem with a pessimistic operator (~>)") do
+            options.version_constraint = "pessimistic"
+          end
+
+          opts.on("--optimistic", "# Add gem with an optimistic operator (>=)") do
+            options.version_constraint = "optimistic"
+          end
+
           opts.on_tail("-h", "--help", "# Print these usage instructions.") do
             puts opts
             raise PrintHelp
@@ -62,15 +70,6 @@ module Gemrat
             puts Gemrat::VERSION
             raise PrintHelp
           end
-
-          opts.on("--pessimistic", "# Add gem with a pessimistic operator (~>)") do
-            options.version_constraint = "pessimistic"
-          end
-
-          opts.on("--optimistic", "# Add gem with a optimistic operator (>=)") do
-            options.version_constraint = "optimistic"
-          end
-
         end
 
         begin

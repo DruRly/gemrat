@@ -7,7 +7,7 @@ module Gemrat
     alias_method :valid?, :valid
 
     ACTIONS = OpenStruct.new({:add => "add", :update => "update",
-                              :skip => "skip", :no_version => "no version"})
+                              :skip => "skip"})
 
     def initialize
       self.valid = true
@@ -46,7 +46,7 @@ module Gemrat
     def skip?
       self.action == ACTIONS.skip
     end
-    
+
     def add!
       self.action = ACTIONS.add
     end
@@ -55,12 +55,12 @@ module Gemrat
       self.action == ACTIONS.add
     end
 
-    def no_version!
-      self.no_version = ACTIONS.no_version
+    def no_version?
+      no_version
     end
 
-    def no_version?
-      self.no_version == ACTIONS.no_version
+    def no_version!
+      self.no_version = true
     end
 
     private
