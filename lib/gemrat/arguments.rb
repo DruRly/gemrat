@@ -62,6 +62,15 @@ module Gemrat
             puts Gemrat::VERSION
             raise PrintHelp
           end
+
+          opts.on("--pessimistic", "# Add gem with a pessimistic operator (~>)") do
+            options.version_constraint = "pessimistic"
+          end
+
+          opts.on("--optimistic", "# Add gem with a optimistic operator (>=)") do
+            options.version_constraint = "optimistic"
+          end
+
         end
 
         begin
