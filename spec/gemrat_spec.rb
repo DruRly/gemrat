@@ -80,6 +80,34 @@ describe Gemrat do
         it "runs bundle install" do
           output.should include("Bundling")
         end
+
+        ["when the --optimistic flag is given with the --no-version flag", "--optimistic",
+         "when the --pessimistic flag is given with the --no-version flag", "--pessimistic"].each_slice(2) do |ctx, flag|
+          context ctx do
+            let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", "--no-version", flag) }}
+            it "should raise Invalid Flags error" do
+              output.should include(Gemrat::Messages::INVALID_FLAGS)
+            end
+          end
+        end
+      end
+
+      context "when the --optimistic flag is given" do
+        let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", "--optimistic") }}
+        it "should add the gem with the optimistic constraint" do
+          output.should include("gem 'sinatra', '>= 1.4.3'")
+          gemfile_contents = File.open('TestGemfile', 'r').read
+          gemfile_contents.should include("gem 'sinatra', '>= 1.4.3'")
+        end
+      end
+
+      context "when the --pessimistic flag is given" do
+        let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", "--pessimistic") }}
+        it "should add the gem with the pessimistic constraint" do
+          output.should include("gem 'sinatra', '~> 1.4.3'")
+          gemfile_contents = File.open('TestGemfile', 'r').read
+          gemfile_contents.should include("gem 'sinatra', '~> 1.4.3'")
+        end
       end
 
       pending "when the --environment or -e flag is given" do

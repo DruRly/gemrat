@@ -1,6 +1,5 @@
 require "ostruct"
 require "optparse"
-require "pry"
 
 require "gemrat/version"
 require "gemrat/messages"

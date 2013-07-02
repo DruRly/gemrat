@@ -29,12 +29,6 @@ module Gemrat
         end
         puts "Updated '#{gem.name}' to version '#{gem.version}'.".green
         needs_bundle!
-      elsif gem.no_version?
-        file.write "\ngem '#{gem.name}'"
-
-        puts "gem '#{gem.name}' added to your Gemfile.".green
-
-        needs_bundle!
       end
     ensure
       file.close

@@ -28,7 +28,8 @@ module Gemrat
 
     private
 
-      attr_accessor :gems, :gemfile, :no_install, :no_version, :version_constraint
+      attr_accessor :gems, :gemfile, :no_install, :no_version,
+        :version_constraint
 
       def parse_arguments(*args)
         Arguments.new(*args).tap do |a|
@@ -48,6 +49,9 @@ module Gemrat
         gem.invalid!
       rescue Gemfile::DuplicateGemFound
         puts Messages::DUPLICATE_GEM_FOUND % gem.name
+        gem.invalid!
+      rescue Gem::InvalidFlags
+        puts Messages::INVALID_FLAGS.red
         gem.invalid!
       end
 

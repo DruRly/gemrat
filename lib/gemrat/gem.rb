@@ -1,8 +1,9 @@
 module Gemrat
   class Gem
     class NotFound < StandardError; end
+    class InvalidFlags < StandardError; end
 
-    attr_accessor :name, :valid, :action, :version_constraint
+    attr_accessor :name, :valid, :action, :version_constraint, :no_version
     alias_method :valid?, :valid
 
     ACTIONS = OpenStruct.new({:add => "add", :update => "update",
@@ -55,18 +56,18 @@ module Gemrat
     end
 
     def no_version!
-      self.action = ACTIONS.no_version
+      self.no_version = ACTIONS.no_version
     end
 
     def no_version?
-      self.action == ACTIONS.no_version
+      self.no_version == ACTIONS.no_version
     end
 
     private
 
       def get_output
         if self.no_version? && self.version_constraint
-          raise ArgumentError
+          raise InvalidFlags
         end
         if self.no_version?
           return with_no_version
@@ -78,10 +79,10 @@ module Gemrat
       end
 
       def with_no_version
-        "gem #{gem.name}"
+        "gem '#{name}'"
       end
 
-      def with_version_constraints
+      def with_version_constraint
         case self.version_constraint
         when "optimistic"
           "gem '#{name}', '>= #{version}'"
