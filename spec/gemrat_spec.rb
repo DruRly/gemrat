@@ -287,5 +287,29 @@ describe Gemrat do
         end
       end
     end
+
+    context "and the gem doesn't have a version specified" do
+      before do
+        test_gemfile = File.open("TestGemfile", "w")
+        test_gemfile << %Q{https://rubygems.org'
+                           # Specify your gem's dependencies in gemrat.gemspec
+                           gem 'minitest'}
+        test_gemfile.close
+      end
+
+      let!(:output) { capture_stdout { Gemrat::Runner.run("minitest", "-g", "TestGemfile")} }
+
+      it "informs that a gem already exists" do
+        output.should include("gem 'minitest' already exists")
+      end
+
+      it "doesn't add the gem to the gemfile" do
+        File.read("TestGemfile").should_not match(/minitest.+5\.0\.5/)
+      end
+
+      it "doesn't touch the old gem in the gemfile" do
+        File.read("TestGemfile").should match(/minitest.$/)
+      end
+    end
   end
 end
