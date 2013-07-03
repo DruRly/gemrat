@@ -92,23 +92,19 @@ describe Gemrat do
         end
       end
 
-      context "when the --optimistic flag is given" do
-        let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", "--optimistic") }}
-        it "should add the gem with the optimistic constraint" do
-          output.should include("gem 'sinatra', '>= 1.4.3'")
-          gemfile_contents = File.open('TestGemfile', 'r').read
-          gemfile_contents.should include("gem 'sinatra', '>= 1.4.3'")
+      ["when the --optimistic flag is given", "--optimistic", ">=",
+       "when the --pessimistic flag is given", "--pessimistic", "~>",
+       "when the -o flag is given", "-o", ">=",
+       "when the -p flag is given", "-p", "~>"].each_slice(3) do |ctx, flag, constraint|
+        context ctx do
+          let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", flag) }}
+          it "should add the gem with appropriate version constraint" do
+            output.should include("gem 'sinatra', '#{constraint} 1.4.3'")
+            gemfile_contents = File.open('TestGemfile', 'r').read
+            gemfile_contents.should include("gem 'sinatra', '#{constraint} 1.4.3'")
+          end
         end
-      end
-
-      context "when the --pessimistic flag is given" do
-        let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", "--pessimistic") }}
-        it "should add the gem with the pessimistic constraint" do
-          output.should include("gem 'sinatra', '~> 1.4.3'")
-          gemfile_contents = File.open('TestGemfile', 'r').read
-          gemfile_contents.should include("gem 'sinatra', '~> 1.4.3'")
-        end
-      end
+       end
 
       pending "when the --environment or -e flag is given" do
         let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", "--environment test") }}
