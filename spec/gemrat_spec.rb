@@ -80,7 +80,31 @@ describe Gemrat do
         it "runs bundle install" do
           output.should include("Bundling")
         end
+
+        ["when the --optimistic flag is given with the --no-version flag", "--optimistic",
+         "when the --pessimistic flag is given with the --no-version flag", "--pessimistic"].each_slice(2) do |ctx, flag|
+          context ctx do
+            let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", "--no-version", flag) }}
+            it "should raise Invalid Flags error" do
+              output.should include(Gemrat::Messages::INVALID_FLAGS)
+            end
+          end
+        end
       end
+
+      ["when the --optimistic flag is given", "--optimistic", ">=",
+       "when the --pessimistic flag is given", "--pessimistic", "~>",
+       "when the -o flag is given", "-o", ">=",
+       "when the -p flag is given", "-p", "~>"].each_slice(3) do |ctx, flag, constraint|
+        context ctx do
+          let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", flag) }}
+          it "should add the gem with appropriate version constraint" do
+            output.should include("gem 'sinatra', '#{constraint} 1.4.3'")
+            gemfile_contents = File.open('TestGemfile', 'r').read
+            gemfile_contents.should include("gem 'sinatra', '#{constraint} 1.4.3'")
+          end
+        end
+       end
 
       pending "when the --environment or -e flag is given" do
         let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", "--environment test") }}
@@ -174,7 +198,6 @@ describe Gemrat do
   end
 
   context "when gem already exists in a gemfile" do
-
     context "and the gem is the newest version" do
       before do
         test_gemfile = File.open("TestGemfile", "w")
@@ -257,6 +280,54 @@ describe Gemrat do
             output.should include("Bundling...")
           end
         end
+      end
+    end
+
+    context "and the gem doesn't have a version specified" do
+      before do
+        test_gemfile = File.open("TestGemfile", "w")
+        test_gemfile << %Q{https://rubygems.org'
+                           # Specify your gem's dependencies in gemrat.gemspec
+                           gem 'minitest'}
+        test_gemfile.close
+      end
+
+      let!(:output) { capture_stdout { Gemrat::Runner.run("minitest", "-g", "TestGemfile")} }
+
+      it "informs that a gem already exists" do
+        output.should include("gem 'minitest' already exists")
+      end
+
+      it "doesn't add the gem to the gemfile" do
+        File.read("TestGemfile").should_not match(/minitest.+5\.0\.5/)
+      end
+
+      it "doesn't touch the old gem in the gemfile" do
+        File.read("TestGemfile").should match(/minitest.$/)
+      end
+    end
+
+    context "the gem doesn't have a version specified and is mentioned in the comments (turbolinks issue)" do
+      before do
+        test_gemfile = File.open("TestGemfile", "w")
+        test_gemfile << %Q{https://rubygems.org'
+                               # Specify your gem's dependencies in gemrat.gemspec
+                               # Read more: https://github.com/rails/turbolinks
+                               gem 'turbolinks'}
+        test_gemfile.close
+      end
+
+      let!(:output) { capture_stdout { Gemrat::Runner.run("turbolinks", "-g", "TestGemfile") }}
+      it "should not prompt for a replacement" do
+        output.should_not include("there is a newer version of the gem")
+      end
+
+      it "should notify you that the gem already exists and abort" do
+        output.should include("gem 'turbolinks' already exists in your Gemfile. Skipping...")
+      end
+
+      it "doesn't add the gem to the gemfile" do
+        File.read("TestGemfile").should_not match(/turbolinks.+1\.2\.0/)
       end
     end
   end
