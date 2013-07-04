@@ -198,7 +198,6 @@ describe Gemrat do
   end
 
   context "when gem already exists in a gemfile" do
-
     context "and the gem is the newest version" do
       before do
         test_gemfile = File.open("TestGemfile", "w")
@@ -305,6 +304,30 @@ describe Gemrat do
 
       it "doesn't touch the old gem in the gemfile" do
         File.read("TestGemfile").should match(/minitest.$/)
+      end
+    end
+
+    context "the gem doesn't have a version specified and is mentioned in the comments (turbolinks issue)" do
+      before do
+        test_gemfile = File.open("TestGemfile", "w")
+        test_gemfile << %Q{https://rubygems.org'
+                               # Specify your gem's dependencies in gemrat.gemspec
+                               # Read more: https://github.com/rails/turbolinks
+                               gem 'turbolinks'}
+        test_gemfile.close
+      end
+
+      let!(:output) { capture_stdout { Gemrat::Runner.run("turbolinks", "-g", "TestGemfile") }}
+      it "should not prompt for a replacement" do
+        output.should_not include("there is a newer version of the gem")
+      end
+
+      it "should notify you that the gem already exists and abort" do
+        output.should include("gem 'turbolinks' already exists in your Gemfile. Skipping...")
+      end
+
+      it "doesn't add the gem to the gemfile" do
+        File.read("TestGemfile").should_not match(/turbolinks.+1\.2\.0/)
       end
     end
   end
