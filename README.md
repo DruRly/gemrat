@@ -45,6 +45,8 @@ Options:
     -g, --gemfile GEMFILE            # Specify the Gemfile to be used, defaults to 'Gemfile'
         --no-install                 # Skip executing bundle after adding the gem.
         --no-version                 # Do not add a version to the gemfile.
+    -p, --pessimistic                # Add gem with a pessimistic operator (~>)
+    -o, --optimistic                 # Add gem with an optimistic operator (>=)
     -v, --version                    # Show current gemrat version.
     -h, --help                       # Print these usage instructions.
 </pre>
