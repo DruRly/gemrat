@@ -29,12 +29,6 @@ module Gemrat
         end
         puts "Updated '#{gem.name}' to version '#{gem.version}'.".green
         needs_bundle!
-      elsif gem.no_version?
-        file.write "\ngem '#{gem.name}'"
-
-        puts "gem '#{gem.name}' added to your Gemfile.".green
-
-        needs_bundle!
       end
     ensure
       file.close
@@ -48,19 +42,19 @@ module Gemrat
       end
 
       def check(gem, file)
-        grep_file = file.grep(/.*#{gem.name}.*#{gem.version}.*/ )
-        raise DuplicateGemFound unless grep_file.empty?
-        current_gem_version = get_current_gem_version(gem, file)
+        @grep_file = file.grep(/gem.*#{gem.name}.*/)
+        @current_gem_version = get_current_gem_version
+        raise DuplicateGemFound if duplicate_gem? gem
 
-        return unless current_gem_version =~ /\S/
+        return unless @current_gem_version =~ /\S/
 
-        if current_gem_version < gem.version
-          prompt_gem_replacement(gem, current_gem_version)
+        if @current_gem_version < gem.version
+          prompt_gem_replacement(gem)
         end
       end
 
-      def prompt_gem_replacement(gem, gem_version)
-        print (Messages::NEWER_GEM_FOUND % [gem.name, gem.version, gem_version]).chomp + " "
+      def prompt_gem_replacement(gem)
+        print (Messages::NEWER_GEM_FOUND % [gem.name, gem.version, @current_gem_version]).chomp + " "
         case input
         when /n|no/
           gem.skip!
@@ -69,11 +63,12 @@ module Gemrat
         end
       end
 
-      def get_current_gem_version(gem, file)
-        file.rewind
-        gem_version = file.grep(/.*#{gem.name}.*/)
-        gem_version = gem_version.to_s.gsub(/[^\d|.]+/, '')
-        gem_version
+      def duplicate_gem? gem
+        !@grep_file.empty? && (@current_gem_version == gem.version || @current_gem_version.empty?)
+      end
+
+      def get_current_gem_version
+        @grep_file.to_s.match(/\d[\d|.]+/).to_s
       end
 
       def input

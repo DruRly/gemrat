@@ -28,5 +28,11 @@ module Gemrat
     Gem '%s' already exists, but there is a newer version of the gem (v %s > v %s).
     Update version? (Y/n)
     NEWER_GEM_FOUND
+
+    INVALID_FLAGS = <<-INVALID_FLAGS
+
+    You have specified flags that are incompatile with each other. The most common cause
+    is specifiying the --no-version and --optimistic or --pessimistic flags together.
+    INVALID_FLAGS
   end
 end

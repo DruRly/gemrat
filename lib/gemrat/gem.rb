@@ -1,12 +1,13 @@
 module Gemrat
   class Gem
     class NotFound < StandardError; end
+    class InvalidFlags < StandardError; end
 
-    attr_accessor :name, :valid, :action
+    attr_accessor :name, :valid, :action, :version_constraint, :no_version
     alias_method :valid?, :valid
 
     ACTIONS = OpenStruct.new({:add => "add", :update => "update",
-                              :skip => "skip", :no_version => "no version"})
+                              :skip => "skip"})
 
     def initialize
       self.valid = true
@@ -15,7 +16,7 @@ module Gemrat
     end
 
     def to_s
-      @output ||= "gem '#{name}', '#{version}'"
+      @output ||= get_output
     end
 
     def invalid!
@@ -45,7 +46,7 @@ module Gemrat
     def skip?
       self.action == ACTIONS.skip
     end
-    
+
     def add!
       self.action = ACTIONS.add
     end
@@ -54,15 +55,41 @@ module Gemrat
       self.action == ACTIONS.add
     end
 
-    def no_version!
-      self.action = ACTIONS.no_version
+    def no_version?
+      no_version
     end
 
-    def no_version?
-      self.action == ACTIONS.no_version
+    def no_version!
+      self.no_version = true
     end
 
     private
+
+      def get_output
+        if self.no_version? && self.version_constraint
+          raise InvalidFlags
+        end
+        if self.no_version?
+          return with_no_version
+        elsif self.version_constraint
+          return with_version_constraint
+        else
+          return "gem '#{name}', '#{version}'"
+        end
+      end
+
+      def with_no_version
+        "gem '#{name}'"
+      end
+
+      def with_version_constraint
+        case self.version_constraint
+        when "optimistic"
+          "gem '#{name}', '>= #{version}'"
+        when "pessimistic"
+          "gem '#{name}', '~> #{version}'"
+        end
+      end
 
       def platform_dependent?
         versions.count > 1
