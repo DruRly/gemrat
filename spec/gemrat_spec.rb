@@ -56,6 +56,21 @@ describe Gemrat do
         output.should include("Bundling")
       end
 
+      # Tests for sqlite3 and s3 bugs
+      context "when the gem ends in a number" do
+        let!(:output) { capture_stdout { Gemrat::Runner.run("sqlite3", "-g", "TestGemfile") }}
+
+        it "should parse the gem correctly" do
+          output.should include("gem 'sqlite3', '1.3.7' added to your Gemfile.")
+          output.should_not include("gem 'sqlite3', '30.3.12' added to your Gemfile.")
+        end
+
+        it "should add the gem to the gemfile correctly" do
+          File.read("TestGemfile").should match(/sqlite3.+1\.3\.7/)
+          File.read("TestGemfile").should_not match(/sqlite3.+3'\.3\.12/)
+        end
+      end
+
       context "when the --no-install flag is given" do
         let(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile", "--no-install") }}
         it "adds latest gem version to gemfile" do
