@@ -96,7 +96,7 @@ module Gemrat
       end
 
       def standard_version
-        normalize_name.gsub(/[^\d\.]/, '')
+        normalize_name.match(/\d[\d\.]+/).to_s
       end
 
       def versions
