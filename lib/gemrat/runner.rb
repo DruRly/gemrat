@@ -1,3 +1,5 @@
+require "bundler/cli"
+
 module Gemrat
   class Runner
     class << self
@@ -84,7 +86,7 @@ module Gemrat
 
       def run_bundle
         puts "Bundling...".green
-        `bundle`
+        Bundler::CLI.start([])
       end
   end
 end
