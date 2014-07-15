@@ -42,7 +42,7 @@ module Gemrat
       end
 
       def check(gem, file)
-        @grep_file = file.grep(/gem.*#{gem.name}.*/)
+        @grep_file = file.grep(/^[^\#]*gem.*#{gem.name}.*/)
         @current_gem_version = get_current_gem_version
         raise DuplicateGemFound if duplicate_gem? gem
 
