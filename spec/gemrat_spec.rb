@@ -345,5 +345,19 @@ describe Gemrat do
         File.read("TestGemfile").should_not match(/turbolinks.+1\.2\.0/)
       end
     end
+    
+    context "the gemfile has a source automatically added if the file didn't already exist" do
+      before do
+        File.delete "TestGemfile"
+      end
+
+      let!(:output) { capture_stdout { Gemrat::Runner.run("sinatra", "-g", "TestGemfile") }}
+      it "should add a source" do
+        File.read("TestGemfile").should match("source 'https://rubygems.org'")
+      end
+      it "should add the gem to the gemfile" do
+        File.read("TestGemfile").should match(/gem 'sinatra'/)
+      end
+    end
   end
 end

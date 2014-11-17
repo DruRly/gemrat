@@ -11,7 +11,7 @@ module Gemrat
     end
 
     def add(gem)
-      file = File.open(path, "a+")
+      file = create_or_open_gemfile path
 
       check(gem, file)
 
@@ -36,6 +36,13 @@ module Gemrat
 
     private
       attr_accessor :path
+
+      def create_or_open_gemfile(path)
+        gemfile_exists = File.exists? path
+        file = File.open(path, "a+")
+        file.write "source 'https://rubygems.org'\n" if not gemfile_exists
+        return file
+      end
 
       def needs_bundle!
         self.needs_bundle = true
